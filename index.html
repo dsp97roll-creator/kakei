@@ -45,7 +45,7 @@ h2{font-size:16px;letter-spacing:-.03em}.card{border:1px solid #edf2fa;border-ra
 <div id="homeDetails"></div>
 <div class="card chartCard"><div class="row"><h2>収入の推移</h2><span class="sub">月別収入</span></div><div class="periods"><button type="button" class="period active" data-period="1">1ヶ月</button><button type="button" class="period" data-period="3">3ヶ月</button><button type="button" class="period" data-period="6">6ヶ月</button><button type="button" class="period" data-period="12">12ヶ月</button></div><div class="chartFrame"><div id="incomeYAxis" class="yAxis"></div><div class="chart" id="myChart"></div></div><div id="chartDetail" class="chartDetail" role="status">棒をタップすると、その月の収入を確認できます。</div><p class="note chartNote">＊はサンプル値です。実際の収入を登録すると置き換わります。</p></div>
 </section>
-<section id="detail" class="hidden" aria-labelledby="detailTitle"><div class="detailNav"><button type="button" id="backHome">‹ 自分に戻る</button><h2 id="detailTitle" tabindex="-1"></h2></div><div id="detailBody"></div></section><section id="shared" class="hidden"><div id="sharedLive"></div><details><summary>v5の共有サンプルを表示</summary><div class="card"><h2>共有ページ</h2><p class="note">v5の参考表示です。以下の数値と支出推移はサンプルです。</p><div class="grid"><div class="metric"><div class="label">2人の合計収入</div><div class="value">¥550,000</div></div><div class="metric"><div class="label">共通固定費</div><div class="value">¥120,000</div></div><div class="metric"><div class="label">2人の貯蓄</div><div class="value">¥110,000</div></div><div class="metric"><div class="label">自由費合計</div><div class="value">¥165,000</div></div></div></div><div class="card"><div class="row"><h2>2人の支出推移</h2><span class="sub">6か月</span></div><div class="chart" id="sharedChart"></div></div></details></section>
+<section id="detail" class="hidden" aria-labelledby="detailTitle"><div class="detailNav"><button type="button" id="backHome">‹ 戻る</button><h2 id="detailTitle" tabindex="-1"></h2></div><button type="button" id="goHome" class="textButton" style="margin:8px 0 14px">⌂ ホームへ戻る</button><div id="detailBody"></div></section><section id="shared" class="hidden"><div id="sharedLive"></div><details><summary>v5の共有サンプルを表示</summary><div class="card"><h2>共有ページ</h2><p class="note">v5の参考表示です。以下の数値と支出推移はサンプルです。</p><div class="grid"><div class="metric"><div class="label">2人の合計収入</div><div class="value">¥550,000</div></div><div class="metric"><div class="label">共通固定費</div><div class="value">¥120,000</div></div><div class="metric"><div class="label">2人の貯蓄</div><div class="value">¥110,000</div></div><div class="metric"><div class="label">自由費合計</div><div class="value">¥165,000</div></div></div></div><div class="card"><div class="row"><h2>2人の支出推移</h2><span class="sub">6か月</span></div><div class="chart" id="sharedChart"></div></div></details></section>
 <footer>データはこのブラウザに保存されます。2台の端末間の同期・銀行やカードとの連携は未接続です。<br><button type="button" id="exportData" class="textButton">データをバックアップ</button></footer><div id="toast" class="toast hidden" role="status"></div></div>
 <script>
 /* Putatu v6 data contract
@@ -63,7 +63,7 @@ h2{font-size:16px;letter-spacing:-.03em}.card{border:1px solid #edf2fa;border-ra
 const $=id=>document.getElementById(id), yen=n=>'¥'+Math.round(n).toLocaleString('ja-JP');
 const KEY='putatu.v6', LIMIT=1000000000000;
 const monthKey=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
-let selectedMonth=monthKey(new Date()), page='me', period=1, edit=null, toastTimer, homeScroll=0;
+let selectedMonth=monthKey(new Date()), page='me', period=1, edit=null, toastTimer, homeScroll=0, navHistory=[], editScroll=0;
 const id=()=>globalThis.crypto?.randomUUID?.()||('p-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2));
 const validMoney=v=>Number.isFinite(v)&&v>=0&&v<=LIMIT&&Number.isInteger(v);
 const moneyValue=v=>v!==''&&validMoney(Number(v))?Number(v):null;
@@ -121,7 +121,28 @@ const fixed='<button type="button" class="homeCardButton" data-detail="fixed"><d
 const loan=state.loans.length?'<button type="button" class="homeCardButton loanHome" data-detail="loan"><div class="row"><h2>ローン・返済状況</h2><span class="cardArrow">›</span></div><div class="big">'+yen(sum(state.loans.map(l=>l.balance)))+'</div><div class="sub">残高 · 今月の支払い確認 '+paid+' / '+state.loans.length+'件</div></button>':'';
 $('homeDetails').innerHTML=free+'<div class="homePair">'+savings+fixed+'</div>'+loan;}
 function renderDetail(){const titles={fixed:'固定費の内訳',free:'自由費の使用状況',save:'貯蓄の振り分け',loan:'ローン・支払い管理',ratio:'収入の分配'};$('detailTitle').textContent=titles[page]||'';$('detailBody').innerHTML=page==='fixed'?renderFixed():page==='free'?renderFree():page==='save'?renderSave():page==='ratio'?renderRatio():renderLoan();if(page==='ratio')ratioSliders();}
-function showPage(next,focus=true){const previous=page;if(previous==='me'&&!['me','shared'].includes(next))homeScroll=window.scrollY;page=next;edit=null;document.querySelectorAll('.tab').forEach(b=>{const selected=b.dataset.tab===(next==='shared'?'shared':'me');b.classList.toggle('active',selected);b.setAttribute('aria-pressed',selected);});$('me').classList.toggle('hidden',next!=='me');$('shared').classList.toggle('hidden',next!=='shared');$('detail').classList.toggle('hidden',['me','shared'].includes(next));render();if(focus){window.scrollTo(0,previous!=='me'&&next==='me'?homeScroll:0);if(!['me','shared'].includes(next))$('detailTitle').focus();}}
+function showPage(next,focus=true,fromBack=false,restoreScroll=0){
+ const previous=page;
+ if(!fromBack&&next!==previous){navHistory.push({page:previous,scroll:window.scrollY});}
+ if(previous==='me'&&!['me','shared'].includes(next))homeScroll=window.scrollY;
+ page=next;edit=null;
+ document.querySelectorAll('.tab').forEach(b=>{const selected=b.dataset.tab===(next==='shared'?'shared':'me');b.classList.toggle('active',selected);b.setAttribute('aria-pressed',selected);});
+ $('me').classList.toggle('hidden',next!=='me');$('shared').classList.toggle('hidden',next!=='shared');$('detail').classList.toggle('hidden',['me','shared'].includes(next));
+ render();updateBackLabel();
+ if(focus){window.scrollTo(0,fromBack?restoreScroll:0);if(!['me','shared'].includes(next))$('detailTitle').focus({preventScroll:true});}
+}
+function updateBackLabel(){
+ const parent=navHistory.length?navHistory[navHistory.length-1].page:'me';
+ const labels={me:'自分',shared:'共有',fixed:'固定費',free:'自由費',save:'貯蓄',loan:'ローン',ratio:'収入分配'};
+ $('backHome').textContent=edit?'‹ 詳細に戻る':'‹ '+(labels[parent]||'戻る')+'に戻る';
+}
+function goBack(){
+ if(edit){edit=null;renderDetail();updateBackLabel();window.scrollTo(0,editScroll);return;}
+ const prior=navHistory.pop();
+ if(prior){showPage(prior.page,true,true,prior.scroll);}else{showPage('me',true,true,homeScroll);}
+}
+function goHome(){navHistory=[];showPage('me',true,true,homeScroll);}
+
 function refresh(){save();render();}
 function pastel(t){t=Math.max(0,Math.min(1,t));return 'hsl('+(270*(1-t)+4*t)+' 58% 78%)';}
 function drawBars(el,count,base,isShared=false){
@@ -143,8 +164,8 @@ function submit(event){const f=event.target;if(!f.matches('form[data-form]'))ret
 function click(event){const btn=event.target.closest('button');if(!btn)return;
  if(btn.dataset.detail){showPage(btn.dataset.detail);return;}if(btn.dataset.lock!==undefined){const i=Number(btn.dataset.lock);ratioLocks[i]=!ratioLocks[i];ratioSliders();return;}
  const action=btn.dataset.action;if(!action)return;const type=btn.dataset.type,list=type?collection(type):null,x=list?.find(x=>x.id===btn.dataset.id);
- if(action==='cancel'){edit=null;renderDetail();return;}
- if(action==='edit'&&x){edit=x.id;renderDetail();$('field-name').focus();return;}
+ if(action==='cancel'){edit=null;renderDetail();updateBackLabel();window.scrollTo(0,editScroll);return;}
+ if(action==='edit'&&x){editScroll=window.scrollY;edit=x.id;renderDetail();updateBackLabel();$('field-name').focus();return;}
  if(action==='scope'&&x){x.scope=x.scope==='shared'?'personal':'shared';if(type==='save'){if(x.scope==='shared'&&!x.sharedGoalId)x.sharedGoalId=id();x.members=x.scope==='shared'?[state.ownerId,'partner']:[state.ownerId];}refresh();toast(scopeLabel(x.scope)+'に切り替えました');return;}
  if(action==='delete'&&x){if(!confirm('「'+x.name+'」を削除しますか？'+(type==='save'?'振り分け・入金履歴も削除します。':type==='loan'?'このローンの支払い履歴も削除します。':'')))return;list.splice(list.indexOf(x),1);if(type==='save'){state.contributions=state.contributions.filter(c=>c.accountId!==x.id);Object.values(state.months).forEach(m=>delete m.savingsPlans[x.id]);}if(type==='loan')delete state.loanPayments[x.id];edit=null;refresh();toast('削除しました');return;}
  const a=state.savingsAccounts.find(a=>a.id===btn.dataset.id);if(!a)return;
@@ -157,7 +178,7 @@ function change(event){const el=event.target;if(el.dataset.plan){updatePlan(el);
  if(el.dataset.payment){const l=state.loans.find(l=>l.id===el.dataset.id);if(!l)return;const p={...payment(l),[el.dataset.payment]:el.value==='true'};state.loanPayments[l.id]??={};state.loanPayments[l.id][selectedMonth]=p;refresh();toast('支払い状況を更新しました');}}
 function incomeUpdate(){const inp=$('income');if(!inp)return;const n=moneyValue(inp.value);if(n===null){$('ratioError').textContent='収入は0円以上の整数で入力してください。';return;}month().income=n;refresh();}
 function moveMonth(delta){const[y,m]=selectedMonth.split('-').map(Number),d=new Date(y,m-1+delta,1);if(d.getFullYear()<2000||d.getFullYear()>2199)return;selectedMonth=monthKey(d);edit=null;month();syncIncomeFields();refresh();}
-function init(){document.addEventListener('click',click);document.addEventListener('submit',submit);document.addEventListener('change',change);document.addEventListener('input',e=>{if(e.target.dataset.plan)updatePlan(e.target);});document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.tab)));$('backHome').addEventListener('click',()=>showPage('me'));$('prevMonth').addEventListener('click',()=>moveMonth(-1));$('nextMonth').addEventListener('click',()=>moveMonth(1));document.querySelectorAll('.period').forEach(btn=>btn.addEventListener('click',()=>{period=Number(btn.dataset.period);document.querySelectorAll('.period').forEach(b=>{b.classList.toggle('active',b===btn);b.setAttribute('aria-pressed',b===btn);});drawBars($('myChart'),period,month().income);}));document.addEventListener('change',e=>{if(e.target.id==='income')incomeUpdate();});document.addEventListener('input',e=>{if(e.target.dataset.ratio!==undefined)adjustRatio(Number(e.target.dataset.ratio),Number(e.target.value));});$('exportData').addEventListener('click',()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='putatu-backup-'+monthKey(new Date())+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);toast('バックアップを書き出しました');});month();syncIncomeFields();showPage('me',false);save();}
+function init(){document.addEventListener('click',click);document.addEventListener('submit',submit);document.addEventListener('change',change);document.addEventListener('input',e=>{if(e.target.dataset.plan)updatePlan(e.target);});document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.tab==='me')goHome();else {navHistory=[];showPage('shared');}}));$('backHome').addEventListener('click',goBack);$('goHome').addEventListener('click',goHome);$('prevMonth').addEventListener('click',()=>moveMonth(-1));$('nextMonth').addEventListener('click',()=>moveMonth(1));document.querySelectorAll('.period').forEach(btn=>btn.addEventListener('click',()=>{period=Number(btn.dataset.period);document.querySelectorAll('.period').forEach(b=>{b.classList.toggle('active',b===btn);b.setAttribute('aria-pressed',b===btn);});drawBars($('myChart'),period,month().income);}));document.addEventListener('change',e=>{if(e.target.id==='income')incomeUpdate();});document.addEventListener('input',e=>{if(e.target.dataset.ratio!==undefined)adjustRatio(Number(e.target.dataset.ratio),Number(e.target.value));});$('exportData').addEventListener('click',()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='putatu-backup-'+monthKey(new Date())+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);toast('バックアップを書き出しました');});month();syncIncomeFields();showPage('me',false,true);save();}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
 </script>
