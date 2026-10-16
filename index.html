@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#f7f7f8">
-<title>Putatu · v20</title>
+<title>Putatu · v21</title>
 <style>
 :root{--bg:#f7f7f8;--card:#fff;--text:#17181a;--muted:#777b82;--line:#e7e7ea;--blue:#2374ff;--green:#25b86f;--yellow:#f4c430;--orange:#ff8a32;--red:#ef5350;--purple:#7557c8}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif}
@@ -31,7 +31,22 @@ h2{font-size:16px;letter-spacing:-.03em}.card{border:1px solid #edf2fa;border-ra
 .incomeHero{padding:23px 19px 20px}.heroTop{display:flex;justify-content:space-between;align-items:center}.eyebrow{font-size:12px;color:#8496ab;font-weight:600}.incomeAmount{font-size:34px;font-weight:800;letter-spacing:-.055em;margin:6px 0 2px;font-variant-numeric:tabular-nums}.incomeHero .pie{width:216px;height:216px;flex-basis:216px;box-shadow:0 12px 26px #5a95e51a}.incomeHero .pieCenter{width:72%;height:72%;background:#fff}.incomeHero .pieCenter strong{font-size:23px;color:#243c5a}.incomeHero .pieCenter .sub{font-size:11px}.incomeHero .pieRow{justify-content:center;margin:23px 0 19px}.heroLegend{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:16px}.heroLegend .legendItem{display:flex;flex-direction:column;align-items:center;gap:4px;background:#f7faff;padding:11px 3px;border-radius:14px}.heroLegend .legendItem strong{font-size:16px}.heroLegend .legendName{font-size:11px;color:#7a8ba0}.heroLegend .dot{width:8px;height:8px}.outlineAction{width:100%;background:#f0f7ff;border:1px solid #dbeaff;border-radius:13px;color:#2174dc;font-weight:750;font-size:13px;padding:12px}.tinyAction{border:0;background:transparent;color:var(--blue);font-weight:700;font-size:12px;padding:8px}.cardArrow{color:#a5b5c7;font-size:23px}.homeCardButton{width:100%;display:block;text-align:left;background:white;border:1px solid #edf2fa;border-radius:22px;padding:19px;margin:14px 0;box-shadow:0 8px 30px #2a6cb00b}.homeCardButton .row{margin:0}.homeCardButton .big{margin:9px 0 5px}.homeCardButton .sub{font-size:12px}.homeCardButton .progress{margin:13px 0 9px;height:9px;background:#eaf1f9}.homeCardButton .progress span{background:#37bea8}.homePair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:14px 0}.homePair .homeCardButton{margin:0;min-height:137px;padding:16px}.homePair .big{font-size:20px;letter-spacing:-.045em;overflow-wrap:anywhere}.homePair .sub{font-size:11px}.homePair .homeIcon{font-size:21px;margin-bottom:9px}.loanHome{margin-top:12px}.chartCard .row{margin:0 0 15px}.period{font-size:12px;min-height:34px;padding:8px 12px;border-radius:10px}.period.active{background:#e6f2ff;border-color:#bcdcff;color:#146dd3}.chartFrame{display:grid;grid-template-columns:38px minmax(0,1fr);gap:8px;margin-top:15px}.yAxis{height:178px;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-end;font-size:10px;color:#91a0b4;padding:0 0 1px}.chart{height:178px;border-bottom:1px solid #dce7f4;background:repeating-linear-gradient(to bottom,transparent 0,transparent calc(25% - 1px),#eaf0f8 calc(25% - 1px),#eaf0f8 25%);padding:0 3px;gap:5px;overflow:visible}.chart .col{position:relative;justify-content:flex-end;padding-bottom:0}.chart .singleBar{background:linear-gradient(180deg,#318df3,#7fb8f7)!important;border-radius:7px 7px 0 0;transition:height .38s ease;cursor:pointer}.chart .singleBar.selected{background:linear-gradient(180deg,#176cdb,#388ef0)!important}.chart .month{position:absolute;top:calc(100% + 7px);left:0;width:100%;font-size:10px;white-space:nowrap}.chart .barValue{position:absolute;bottom:calc(100% + 5px);left:50%;transform:translateX(-50%);font-size:10px;color:#246bd1}.chartNote{margin-top:30px!important}.chartDetail{font-size:12px;color:#507498;min-height:18px;margin-top:28px}.detailNav{top:0;background:#f7faff}.navCard{box-shadow:0 4px 18px #2a6cb00b}.navCard .amount{color:#24558e}.metric{background:#f7faff}.hero.fixedTint{background:#eef5ff}.hero.freeTint{background:#eaf9f5}.hero.saveTint{background:#fff8ed}.action{background:#287fe9}.toast{bottom:calc(88px + env(safe-area-inset-bottom))}
 .ratioEditor .sliderRow{padding:16px 0;border-bottom:1px solid #edf2fa}.sliderHead{display:flex;justify-content:space-between;align-items:center;gap:8px}.sliderHead strong{font-size:15px}.sliderHead .pct{font-size:20px;font-weight:800;color:#256fcf}.sliderRow input[type=range]{width:100%;padding:0;accent-color:#287fe9;margin-top:14px;border:0}.lockBtn{border:1px solid #e1eaf5;background:#fff;color:#8190a3;border-radius:10px;min-height:35px;padding:6px 10px;font-size:12px}.lockBtn.locked{background:#e7f2ff;color:#216fd1;border-color:#b8d7ff}.ratioEditor .totalLine{display:flex;justify-content:space-between;font-weight:750;margin-top:16px}.ratioEditor .note{margin-top:12px}
 @media(max-width:390px){.incomeHero .pie{width:188px;height:188px;flex-basis:188px}.incomeAmount{font-size:30px}.homePair .big{font-size:18px}.app{padding-left:15px;padding-right:15px}.card,.homeCardButton{padding:16px}}
-.sharedQuiet{padding:14px 8px 15px!important;box-shadow:none!important;background:transparent!important;border-radius:0!important}.sharedQuiet h2{font-size:22px!important;color:var(--ink)!important;margin:5px 0!important}.sharedMonthly{padding:17px 18px!important;margin:0 0 17px!important}.sharedMonthlyTop{display:flex;align-items:center;justify-content:space-between;font-size:13px;color:var(--ink);font-weight:750;margin-bottom:16px}.sharedMonthlyTop strong{font-size:11px;color:var(--muted);font-weight:600}.sharedMonthlyGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.sharedMonthlyGrid>div{min-width:0}.sharedMonthlyGrid small{display:block;font-size:10px;color:var(--muted);margin-bottom:7px}.sharedMonthlyGrid strong{display:block;font-size:clamp(12px,3.5vw,17px);letter-spacing:-.055em;font-variant-numeric:tabular-nums;white-space:nowrap}.sharedTiles{display:grid;gap:11px}.sharedTile{width:100%;display:flex;align-items:center;gap:15px;padding:19px 16px;border:0;border-radius:22px;background:var(--card,#fff);color:var(--ink);text-align:left;box-shadow:0 8px 28px #2a76bd12}.sharedTileIcon{width:52px;height:52px;flex:0 0 52px;display:grid;place-items:center;border-radius:17px;font-size:27px;color:#2787e2}.sharedTileText{display:flex;flex-direction:column;gap:3px;flex:1;min-width:0}.sharedTileText>strong{font-size:13px}.sharedTileAmount{font-size:26px;font-weight:800;letter-spacing:-.06em;font-variant-numeric:tabular-nums}.sharedTileText small{font-size:11px;color:var(--muted)}.sharedSubNav{display:flex;align-items:center;gap:12px;margin:5px 0 19px}.sharedSubNav button{border:0;background:none;color:#2787e2;font-size:34px;min-width:38px;text-align:left}.sharedSubNav h2{font-size:18px;margin:0}.sharedDetailHero{padding:20px!important}.sharedDetailHero .big{margin:8px 0 13px}.sharedDetailHero .statGrid{margin-top:10px}</style>
+.sharedQuiet{padding:14px 8px 15px!important;box-shadow:none!important;background:transparent!important;border-radius:0!important}.sharedQuiet h2{font-size:22px!important;color:var(--ink)!important;margin:5px 0!important}.sharedMonthly{padding:17px 18px!important;margin:0 0 17px!important}.sharedMonthlyTop{display:flex;align-items:center;justify-content:space-between;font-size:13px;color:var(--ink);font-weight:750;margin-bottom:16px}.sharedMonthlyTop strong{font-size:11px;color:var(--muted);font-weight:600}.sharedMonthlyGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.sharedMonthlyGrid>div{min-width:0}.sharedMonthlyGrid small{display:block;font-size:10px;color:var(--muted);margin-bottom:7px}.sharedMonthlyGrid strong{display:block;font-size:clamp(12px,3.5vw,17px);letter-spacing:-.055em;font-variant-numeric:tabular-nums;white-space:nowrap}.sharedTiles{display:grid;gap:11px}.sharedTile{width:100%;display:flex;align-items:center;gap:15px;padding:19px 16px;border:0;border-radius:22px;background:var(--card,#fff);color:var(--ink);text-align:left;box-shadow:0 8px 28px #2a76bd12}.sharedTileIcon{width:52px;height:52px;flex:0 0 52px;display:grid;place-items:center;border-radius:17px;font-size:27px;color:#2787e2}.sharedTileText{display:flex;flex-direction:column;gap:3px;flex:1;min-width:0}.sharedTileText>strong{font-size:13px}.sharedTileAmount{font-size:26px;font-weight:800;letter-spacing:-.06em;font-variant-numeric:tabular-nums}.sharedTileText small{font-size:11px;color:var(--muted)}.sharedSubNav{display:flex;align-items:center;gap:12px;margin:5px 0 19px}.sharedSubNav button{border:0;background:none;color:#2787e2;font-size:34px;min-width:38px;text-align:left}.sharedSubNav h2{font-size:18px;margin:0}.sharedDetailHero{padding:20px!important}.sharedDetailHero .big{margin:8px 0 13px}.sharedDetailHero .statGrid{margin-top:10px}
+.putatuReminder{padding:15px 16px!important;margin-bottom:12px!important;border:1px solid rgba(204,154,71,.22)!important}
+.putatuReminderHead{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px;font-weight:750;color:var(--ink);margin-bottom:8px}
+.putatuReminderCount{font-size:11px;color:#9d743b;background:#fff3df;border-radius:99px;padding:4px 8px}
+.putatuReminderRow{display:flex;align-items:center;gap:10px;width:100%;padding:12px 0;border:0;border-bottom:1px solid #d0d9e326;background:transparent;text-align:left;color:var(--ink)}
+.putatuReminderRow>span:first-child{display:flex;flex:1;min-width:0;flex-direction:column;gap:5px}
+.putatuReminderRow strong{font-size:13px}.putatuReminderRow small{font-size:11px;color:var(--muted)}
+.putatuReminderRow b{font-size:14px;white-space:nowrap}.putatuReminderAdd{border:0;background:transparent;color:var(--blue);padding:12px 0 1px;font-size:12px;font-weight:700}
+.putatuReminderManage{width:100%;padding:10px 12px;border:1px dashed #96b7db;border-radius:14px;color:var(--blue);background:transparent;font-size:12px;margin:0 0 14px}
+.putatuReminderOverlay{position:fixed;inset:0;z-index:99999;background:#10233c88;display:flex;align-items:flex-end;justify-content:center}
+.putatuReminderSheet{background:var(--card,#fff);color:var(--ink);border-radius:24px 24px 0 0;width:100%;max-width:500px;max-height:94dvh;overflow:auto;padding:20px 22px max(28px,env(safe-area-inset-bottom))}
+.putatuReminderSheetTop{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}.putatuReminderSheetTop h2{font-size:18px}.putatuReminderSheetTop button{background:transparent;border:0;color:var(--ink);font-size:28px}
+.putatuReminderSheet form{display:grid;gap:12px}.putatuReminderSheet label{display:grid;gap:6px;font-size:12px;font-weight:700}
+.putatuReminderSheet input,.putatuReminderSheet select{width:100%;box-sizing:border-box;padding:12px;border:1px solid #9bb1c755;border-radius:11px;background:var(--card,#fff);color:var(--ink);font-size:16px}
+.putatuReminderHint{font-size:11px;color:var(--muted);line-height:1.6}.putatuReminderDelete{background:transparent;color:#c65c62;border:0;padding:12px}
+</style>
 
 <style>
 /* v10: uncluttered navigation and two-space gesture */
@@ -165,6 +180,56 @@ const KEY='putatu.v6', SPLIT_KEY='putatu.v11.split', PREF_KEY='putatu.v11.prefs'
 const monthKey=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
 let selectedMonth=monthKey(new Date()), page='me', period=1, edit=null, toastTimer, homeScroll=0, navHistory=[], editScroll=0, ratioLocks=[false,false,false];
 let splitData={defaultPct:50,items:{}},prefs={incomeMode:'manual'};try{splitData={...splitData,...JSON.parse(localStorage.getItem(SPLIT_KEY)||'{}')};prefs={...prefs,...JSON.parse(localStorage.getItem(PREF_KEY)||'{}')}}catch(e){}
+const REMINDER_KEY='putatu.v21.reminders';
+let reminders=[];
+try{const v=JSON.parse(localStorage.getItem(REMINDER_KEY)||'[]');if(Array.isArray(v))reminders=v.filter(x=>x&&typeof x.id==='string'&&typeof x.date==='string');}catch(e){}
+const dateShift=(months,day)=>{const d=new Date();return new Date(d.getFullYear(),d.getMonth()+months,Math.min(day,new Date(d.getFullYear(),d.getMonth()+months+1,0).getDate())).toLocaleDateString('sv-SE');};
+function saveReminders(){try{localStorage.setItem(REMINDER_KEY,JSON.stringify(reminders));}catch(e){toast('リマインダーを保存できませんでした');}}
+function seedReminderExamples(){
+ if(localStorage.getItem('putatu.v21.reminders.seeded')==='1'||reminders.length)return;
+ reminders=[
+ {id:'demo-private-sub',title:'年間サブスク更新（サンプル）',date:dateShift(1,18),amount:14400,scope:'personal',repeat:12,notify:30,demo:true},
+ {id:'demo-shared-rent',title:'家賃の契約更新（サンプル）',date:dateShift(2,12),amount:152000,scope:'shared',repeat:24,notify:60,demo:true},
+ {id:'demo-shared-car',title:'車検（サンプル）',date:dateShift(1,25),amount:90000,scope:'shared',repeat:24,notify:30,demo:true}
+ ];saveReminders();try{localStorage.setItem('putatu.v21.reminders.seeded','1');}catch(e){}
+}
+function reminderOccurrence(x,key){
+ const [y,m]=key.split('-').map(Number),[sy,sm,sd]=x.date.split('-').map(Number);
+ if(!sy||!sm||!sd)return null;
+ const distance=(y-sy)*12+m-sm,step=Number(x.repeat)||0;
+ if(distance<0||(step===0&&distance!==0)||(step>0&&distance%step!==0))return null;
+ const lastDay=new Date(y,m,0).getDate(),day=Math.min(sd,lastDay);
+ return {date:key+'-'+String(day).padStart(2,'0'),day};
+}
+function remindersFor(scope){return reminders.filter(x=>x.scope===scope).map(x=>({item:x,occ:reminderOccurrence(x,selectedMonth)})).filter(x=>x.occ).sort((a,b)=>a.occ.day-b.occ.day);}
+function reminderCard(scope){
+ const entries=remindersFor(scope);
+ if(!entries.length)return '';
+ return '<div class="card putatuReminder"><div class="putatuReminderHead"><span>◷ 今月の更新・支払い予定</span><span class="putatuReminderCount">'+entries.length+'件</span></div>'+
+ entries.map(({item:x,occ})=>'<button class="putatuReminderRow" type="button" data-reminder-edit="'+esc(x.id)+'"><span><strong>'+esc(x.title)+'</strong><small>'+occ.day+'日 · '+(x.demo?'サンプル · ':'')+(x.repeat?'繰り返し':'単発')+'</small></span><b>'+yen(x.amount)+'</b><span>›</span></button>').join('')+
+ '<button class="putatuReminderAdd" type="button" data-reminder-add="'+scope+'">＋ 予定を追加</button></div>';
+}
+function reminderManager(scope){
+ return '<button type="button" class="putatuReminderManage" data-reminder-add="'+scope+'">＋ 更新日・引落日の予定を登録</button>';
+}
+function reminderEditor(existing,scope){
+ const x=existing||{title:'',date:dateShift(1,15),amount:0,scope,repeat:12,notify:30};
+ return '<div class="putatuReminderOverlay" id="putatuReminderOverlay"><div class="putatuReminderSheet"><div class="putatuReminderSheetTop"><h2>'+(existing?'予定の編集':'予定を追加')+'</h2><button type="button" data-reminder-close aria-label="閉じる">×</button></div>'+
+ '<form id="putatuReminderForm"><input type="hidden" name="id" value="'+esc(x.id||'')+'"><input type="hidden" name="scope" value="'+esc(x.scope)+'">'+
+ '<label>予定の名前<input name="title" required maxlength="80" value="'+esc(x.title)+'" placeholder="年間サブスク・車検・家賃更新など"></label>'+
+ '<label>次回の更新・引落日<input type="date" name="date" required value="'+esc(x.date)+'"></label>'+
+ '<label>支払予定額（円）<input type="number" name="amount" min="0" max="1000000000000" required value="'+x.amount+'"></label>'+
+ '<label>繰り返し<select name="repeat">'+[[0,'繰り返さない'],[1,'毎月'],[12,'毎年'],[24,'2年ごと']].map(([n,t])=>'<option value="'+n+'" '+(Number(x.repeat)===n?'selected':'')+'>'+t+'</option>').join('')+'</select></label>'+
+ '<label>通知希望<select name="notify">'+[[0,'当日'],[3,'3日前'],[7,'7日前'],[30,'30日前'],[60,'60日前'],[90,'90日前']].map(([n,t])=>'<option value="'+n+'" '+(Number(x.notify)===n?'selected':'')+'>'+t+'</option>').join('')+'</select></label>'+
+ '<p class="putatuReminderHint">現在はPutatu内の月別表示で確認できます。端末への自動プッシュ通知・カレンダー同期は未対応です。</p>'+
+ '<button class="action" type="submit">予定を保存</button>'+(existing?'<button type="button" class="putatuReminderDelete" data-reminder-delete="'+esc(x.id)+'">この予定を削除</button>':'')+
+ '</form></div></div>';
+}
+function showReminderEditor(id,scope){
+ document.getElementById('putatuReminderOverlay')?.remove();
+ const x=reminders.find(r=>r.id===id);
+ document.body.insertAdjacentHTML('beforeend',reminderEditor(x,scope));
+}
 const id=()=>globalThis.crypto?.randomUUID?.()||('p-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2));
 const validMoney=v=>Number.isFinite(v)&&v>=0&&v<=LIMIT&&Number.isInteger(v);
 const moneyValue=v=>v!==''&&validMoney(Number(v))?Number(v):null;
@@ -267,7 +332,7 @@ function renderShared(){
   html='<div class="sharedHeader sharedQuiet"><span class="eyebrow">OUR FINANCE</span><h2>ふたりの家計</h2><span class="sub">共有の家計をまとめて管理</span></div>'+
   '<div class="card sharedMonthly"><div class="sharedMonthlyTop"><span>今月の状況</span><strong>'+esc(selectedMonth.replace('-','年'))+'月</strong></div>'+
   '<div class="sharedMonthlyGrid"><div><small>自分の収入</small><strong>'+yen(income)+'</strong></div><div><small>共有の支出予定</small><strong>'+yen(expenses)+'</strong></div><div><small>自分の負担</small><strong>'+yen(sum(costs.map(x=>splitFor(x.id,x.amount)))+sum(accounts.map(a=>splitFor(a.id,month().savingsPlans[a.id]||0))))+'</strong></div></div></div>'+
-  '<div class="sharedTiles">'+
+  reminderCard('shared')+reminderManager('shared')+'<div class="sharedTiles">'+
   sharedTile('⌂','固定費',fixed,costs.length+'件の共有固定費','fixedTint','fixed')+
   sharedTile('✦','プロジェクト',saved,accounts.length+'件の共有プロジェクト','saveTint','projects')+
   sharedTile('▣','ローン',monthly,loans.length+'件 · 毎月の返済額','loanTint','loans')+
@@ -292,7 +357,7 @@ const free='<button type="button" class="homeCardButton '+(over?'dangerBg':'')+'
 const savings='<button type="button" class="homeCardButton" data-detail="save"><div class="row"><span class="homePictogram savePict" aria-hidden="true">♧</span><span class="cardArrow">›</span></div><div class="sub">累計貯蓄額</div><div class="big">'+yen(bal)+'</div><div class="sub">今月の振り分け '+yen(planTotal())+'</div></button>';
 const fixed='<button type="button" class="homeCardButton" data-detail="fixed"><div class="row"><span class="homePictogram fixedPict" aria-hidden="true">⌂</span><span class="cardArrow">›</span></div><div class="sub">固定費の管理</div><div class="big">'+yen(total)+'</div><div class="sub">本人負担 '+all+'件 · 予算 '+yen(b.fixed)+'</div></button>';
 const loan=state.loans.length?'<button type="button" class="homeCardButton loanHome" data-detail="loan"><div class="row"><h2><span class="homePictogram loanPict" aria-hidden="true">▣</span>ローン・返済状況</h2><span class="cardArrow">›</span></div><div class="big">'+yen(sum(state.loans.map(l=>personalFixedAmount({id:l.id,scope:l.scope,amount:l.monthly}))))+'</div><div class="sub">毎月の本人返済額 · 支払い確認 '+paid+' / '+state.loans.length+'件</div></button>':'';
-$('homeDetails').innerHTML=free+'<div class="homePair">'+savings+fixed+'</div>'+loan;}
+$('homeDetails').innerHTML=reminderCard('personal')+reminderManager('personal')+free+'<div class="homePair">'+savings+fixed+'</div>'+loan;}
 function renderRatio(){const m=month();return '<div class="card compactCard"><div class="row"><h2>収入</h2><span class="sub">'+selectedMonth.replace('-',' / ')+'</span></div><div class="modeTabs"><button type="button" class="modeBtn '+(prefs.incomeMode==='manual'?'selected':'')+'" data-action="incomeMode" data-mode="manual">手動</button><button type="button" class="modeBtn '+(prefs.incomeMode==='auto'?'selected':'')+'" data-action="incomeMode" data-mode="auto">自動連携</button></div>'+(prefs.incomeMode==='auto'?'<div class="autoNotice"><span class="autoIcon">⌁</span><div><strong>自動連携は準備中</strong><small>銀行接続はまだ利用できません。収入は引き続き手動で登録できます。</small></div></div>':'')+'<div class="fieldGrid"><div><label for="baseIncome">基本収入（円）</label><input id="baseIncome" type="number" min="0" max="'+LIMIT+'" inputmode="numeric" value="'+m.baseIncome+'"></div><div><label for="extraIncome">追加収入（円）</label><input id="extraIncome" type="number" min="0" max="'+LIMIT+'" inputmode="numeric" value="'+m.extraIncome+'"></div></div><div class="row incomeTotal"><span>合計</span><strong>'+yen(m.income)+'</strong></div><div class="formActions"><button type="button" class="action" data-action="saveIncome">収入を保存</button><button type="button" class="secondary" data-action="copyIncome">前月をコピー</button></div><p id="incomeError" class="formError" role="alert"></p></div><div class="card compactCard"><div class="row"><h2>分配</h2><span class="sub">自由に調整</span></div><div id="ratioControls"></div><p id="ratioError" class="formError" role="alert"></p></div>'}
 let itemDetail=null,itemAdding=null;
 let ratioDraft=null,ratioDraftMonth=null;
@@ -524,7 +589,26 @@ function initAppearance(){
  document.querySelectorAll('[data-style]').forEach(b=>b.addEventListener('click',()=>{appearance.style=b.dataset.style;saveAppearance();}));
 }
 
-function init(){initAppearance();initProject();document.addEventListener('click',click);document.addEventListener('submit',submit);document.addEventListener('change',change);document.addEventListener('input',e=>{if(e.target.dataset.plan)updatePlan(e.target);});initSpaceGesture();initBackSwipe();$('splitModal').addEventListener('click',e=>{if(e.target===$('splitModal'))closeSplit();});$('backHome').addEventListener('click',goBack);$('goHome').addEventListener('click',goHome);$('prevMonth').addEventListener('click',()=>moveMonth(-1));$('nextMonth').addEventListener('click',()=>moveMonth(1));document.querySelectorAll('.period').forEach(btn=>btn.addEventListener('click',()=>{period=Number(btn.dataset.period);document.querySelectorAll('.period').forEach(b=>{b.classList.toggle('active',b===btn);b.setAttribute('aria-pressed',b===btn);});drawBars($('myChart'),period,month().income);}));document.addEventListener('change',e=>{if(e.target.id==='income')incomeUpdate();if(e.target.name==='splitMode')updateSplitControls();});document.getElementById('splitPct').addEventListener('input',()=>{if(!splitEditing)return;const {total,id}=splitEditing;$('splitMine').value=id==='default'?0:Math.round(total*Number($('splitPct').value)/100);updateSplitControls();});document.getElementById('splitMine').addEventListener('input',()=>{if(!splitEditing)return;const v=Number($('splitMine').value)||0;$('splitPct').value=splitEditing.total?Math.round(v/splitEditing.total*100):0;updateSplitControls();});document.addEventListener('input',e=>{if(e.target.dataset.ratio!==undefined)adjustRatio(Number(e.target.dataset.ratio),Number(e.target.value));if(e.target.dataset.ratioNumber!==undefined)adjustRatio(Number(e.target.dataset.ratioNumber),Number(e.target.value));});$('exportData').addEventListener('click',()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='putatu-backup-'+monthKey(new Date())+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);toast('バックアップを書き出しました');});month();syncIncomeFields();showPage('me',false,true);save();}
+function initReminderUI(){
+ document.addEventListener('click',e=>{
+  const add=e.target.closest('[data-reminder-add]'),edit=e.target.closest('[data-reminder-edit]'),close=e.target.closest('[data-reminder-close]'),del=e.target.closest('[data-reminder-delete]');
+  if(add){showReminderEditor(null,add.dataset.reminderAdd);return;}
+  if(edit){showReminderEditor(edit.dataset.reminderEdit,'personal');return;}
+  if(close){document.getElementById('putatuReminderOverlay')?.remove();return;}
+  if(del){if(confirm('この予定を削除しますか？')){reminders=reminders.filter(x=>x.id!==del.dataset.reminderDelete);saveReminders();document.getElementById('putatuReminderOverlay')?.remove();render();}return;}
+  if(e.target.id==='putatuReminderOverlay')e.target.remove();
+ });
+ document.addEventListener('submit',e=>{
+  if(e.target.id!=='putatuReminderForm')return;
+  e.preventDefault();
+  const d=new FormData(e.target),title=String(d.get('title')||'').trim(),date=String(d.get('date')||''),amount=moneyValue(d.get('amount')),repeat=Number(d.get('repeat')),notify=Number(d.get('notify')),rid=String(d.get('id')||'');
+  if(!title||!/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(date)||amount===null)return;
+  const item={id:rid||id(),title,date,amount,scope:d.get('scope')==='shared'?'shared':'personal',repeat,notify,demo:false};
+  const i=reminders.findIndex(x=>x.id===item.id);if(i>=0)reminders[i]=item;else reminders.push(item);
+  saveReminders();document.getElementById('putatuReminderOverlay')?.remove();render();toast('予定を保存しました');
+ },true);
+}
+function init(){seedReminderExamples();initReminderUI();initAppearance();initProject();document.addEventListener('click',click);document.addEventListener('submit',submit);document.addEventListener('change',change);document.addEventListener('input',e=>{if(e.target.dataset.plan)updatePlan(e.target);});initSpaceGesture();initBackSwipe();$('splitModal').addEventListener('click',e=>{if(e.target===$('splitModal'))closeSplit();});$('backHome').addEventListener('click',goBack);$('goHome').addEventListener('click',goHome);$('prevMonth').addEventListener('click',()=>moveMonth(-1));$('nextMonth').addEventListener('click',()=>moveMonth(1));document.querySelectorAll('.period').forEach(btn=>btn.addEventListener('click',()=>{period=Number(btn.dataset.period);document.querySelectorAll('.period').forEach(b=>{b.classList.toggle('active',b===btn);b.setAttribute('aria-pressed',b===btn);});drawBars($('myChart'),period,month().income);}));document.addEventListener('change',e=>{if(e.target.id==='income')incomeUpdate();if(e.target.name==='splitMode')updateSplitControls();});document.getElementById('splitPct').addEventListener('input',()=>{if(!splitEditing)return;const {total,id}=splitEditing;$('splitMine').value=id==='default'?0:Math.round(total*Number($('splitPct').value)/100);updateSplitControls();});document.getElementById('splitMine').addEventListener('input',()=>{if(!splitEditing)return;const v=Number($('splitMine').value)||0;$('splitPct').value=splitEditing.total?Math.round(v/splitEditing.total*100):0;updateSplitControls();});document.addEventListener('input',e=>{if(e.target.dataset.ratio!==undefined)adjustRatio(Number(e.target.dataset.ratio),Number(e.target.value));if(e.target.dataset.ratioNumber!==undefined)adjustRatio(Number(e.target.dataset.ratioNumber),Number(e.target.value));});$('exportData').addEventListener('click',()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='putatu-backup-'+monthKey(new Date())+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);toast('バックアップを書き出しました');});month();syncIncomeFields();showPage('me',false,true);save();}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
 </script>
