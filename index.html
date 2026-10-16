@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#f7f7f8">
-<title>Putatu · v17</title>
+<title>Putatu · v18</title>
 <style>
 :root{--bg:#f7f7f8;--card:#fff;--text:#17181a;--muted:#777b82;--line:#e7e7ea;--blue:#2374ff;--green:#25b86f;--yellow:#f4c430;--orange:#ff8a32;--red:#ef5350;--purple:#7557c8}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif}
@@ -263,7 +263,7 @@ function renderHome(){const b=budget(),m=month(),total=fixedTotal(),freeLeft=b.f
 const free='<button type="button" class="homeCardButton '+(over?'dangerBg':'')+'" data-detail="free"><div class="row"><h2><span class="homePictogram freePict" aria-hidden="true">◧</span>自由費の残額</h2><span class="cardArrow">›</span></div><div class="big '+(over?'danger':'')+'">'+(over?'−':'')+yen(Math.abs(freeLeft))+'</div><div class="sub">予算 '+yen(b.free)+' ／ 使用 '+yen(m.freeUsed)+'</div>'+progress(m.freeUsed,b.free,over?'#df5757':'#36bba4')+'<div class="sub">'+(over?'予算を超えています':'今月あと使える金額')+'</div></button>';
 const savings='<button type="button" class="homeCardButton" data-detail="save"><div class="row"><span class="homePictogram savePict" aria-hidden="true">♧</span><span class="cardArrow">›</span></div><div class="sub">累計貯蓄額</div><div class="big">'+yen(bal)+'</div><div class="sub">今月の振り分け '+yen(planTotal())+'</div></button>';
 const fixed='<button type="button" class="homeCardButton" data-detail="fixed"><div class="row"><span class="homePictogram fixedPict" aria-hidden="true">⌂</span><span class="cardArrow">›</span></div><div class="sub">固定費の管理</div><div class="big">'+yen(total)+'</div><div class="sub">本人負担 '+all+'件 · 予算 '+yen(b.fixed)+'</div></button>';
-const loan=state.loans.length?'<button type="button" class="homeCardButton loanHome" data-detail="loan"><div class="row"><h2><span class="homePictogram loanPict" aria-hidden="true">▣</span>ローン・返済状況</h2><span class="cardArrow">›</span></div><div class="big">'+yen(sum(state.loans.map(l=>l.balance)))+'</div><div class="sub">残高 · 今月の支払い確認 '+paid+' / '+state.loans.length+'件</div></button>':'';
+const loan=state.loans.length?'<button type="button" class="homeCardButton loanHome" data-detail="loan"><div class="row"><h2><span class="homePictogram loanPict" aria-hidden="true">▣</span>ローン・返済状況</h2><span class="cardArrow">›</span></div><div class="big">'+yen(sum(state.loans.map(l=>personalFixedAmount({id:l.id,scope:l.scope,amount:l.monthly}))))+'</div><div class="sub">毎月の本人返済額 · 支払い確認 '+paid+' / '+state.loans.length+'件</div></button>':'';
 $('homeDetails').innerHTML=free+'<div class="homePair">'+savings+fixed+'</div>'+loan;}
 function renderRatio(){const m=month();return '<div class="card compactCard"><div class="row"><h2>収入</h2><span class="sub">'+selectedMonth.replace('-',' / ')+'</span></div><div class="modeTabs"><button type="button" class="modeBtn '+(prefs.incomeMode==='manual'?'selected':'')+'" data-action="incomeMode" data-mode="manual">手動</button><button type="button" class="modeBtn '+(prefs.incomeMode==='auto'?'selected':'')+'" data-action="incomeMode" data-mode="auto">自動連携</button></div>'+(prefs.incomeMode==='auto'?'<div class="autoNotice"><span class="autoIcon">⌁</span><div><strong>自動連携は準備中</strong><small>銀行接続はまだ利用できません。収入は引き続き手動で登録できます。</small></div></div>':'')+'<div class="fieldGrid"><div><label for="baseIncome">基本収入（円）</label><input id="baseIncome" type="number" min="0" max="'+LIMIT+'" inputmode="numeric" value="'+m.baseIncome+'"></div><div><label for="extraIncome">追加収入（円）</label><input id="extraIncome" type="number" min="0" max="'+LIMIT+'" inputmode="numeric" value="'+m.extraIncome+'"></div></div><div class="row incomeTotal"><span>合計</span><strong>'+yen(m.income)+'</strong></div><div class="formActions"><button type="button" class="action" data-action="saveIncome">収入を保存</button><button type="button" class="secondary" data-action="copyIncome">前月をコピー</button></div><p id="incomeError" class="formError" role="alert"></p></div><div class="card compactCard"><div class="row"><h2>分配</h2><span class="sub">自由に調整</span></div><div id="ratioControls"></div><p id="ratioError" class="formError" role="alert"></p></div>'}
 let itemDetail=null,itemAdding=null;
@@ -288,7 +288,7 @@ function showPage(next,focus=true,fromBack=false,restoreScroll=0){
  const previous=page;
  if(!fromBack&&next!==previous){navHistory.push({page:previous,scroll:window.scrollY});}
  if(previous==='me'&&!['me','shared'].includes(next))homeScroll=window.scrollY;
- page=next;edit=null;itemDetail=null;itemAdding=null; const sn=$('spaceName');if(sn)sn.textContent=next==='shared'?'共有':'自分';
+ page=next;if(next==='me'||next==='shared')currentSpace=next;edit=null;itemDetail=null;itemAdding=null; const sn=$('spaceName');if(sn)sn.textContent=next==='shared'?'共有':'自分';
  document.querySelectorAll('.tab').forEach(b=>{const selected=b.dataset.tab===(next==='shared'?'shared':'me');b.classList.toggle('active',selected);b.setAttribute('aria-pressed',selected);});
  $('me').classList.toggle('hidden',next!=='me');$('shared').classList.toggle('hidden',next!=='shared');$('detail').classList.toggle('hidden',['me','shared'].includes(next));
  render();updateBackLabel();
@@ -307,7 +307,7 @@ function goBack(){
  const prior=navHistory.pop();
  if(prior){showPage(prior.page,true,true,prior.scroll);}else{showPage('me',true,true,homeScroll);}
 }
-function goHome(){navHistory=[];showPage('me',true,true,homeScroll);}
+function goHome(){navHistory=[];currentSpace='me';showPage('me',true,true,homeScroll);}
 
 function refresh(){save();render();}
 function pastel(t){t=Math.max(0,Math.min(1,t));return 'hsl('+(270*(1-t)+4*t)+' 58% 78%)';}
@@ -381,8 +381,36 @@ function moveMonth(delta){const[y,m]=selectedMonth.split('-').map(Number),d=new 
 function initBackSwipe(){let startX=0,startY=0,drag=0,tracking=false,started=false;
  const detail=$('detail');function reset(){detail.style.transition='transform .22s cubic-bezier(.2,.8,.2,1)';detail.style.transform='translateX(0)';setTimeout(()=>{detail.style.transition='';detail.style.transform='';},240);tracking=false;started=false;}
  document.addEventListener('touchstart',e=>{if(e.touches.length!==1||page==='me'||page==='shared'||!$('splitModal').classList.contains('hidden'))return;const t=e.touches[0];if(t.clientX>34||e.target.closest('input,select,textarea,[contenteditable]'))return;startX=t.clientX;startY=t.clientY;drag=0;tracking=true;started=false;},{passive:true});
- document.addEventListener('touchmove',e=>{if(!tracking)return;const t=e.touches[0],dx=t.clientX-startX,dy=t.clientY-startY;if(!started&&Math.abs(dy)>Math.abs(dx)){tracking=false;return;}if(dx<0){reset();return;}if(dx>8)started=true;if(started){drag=Math.min(innerWidth,dx);detail.style.transition='none';detail.style.transform='translateX('+drag+'px)';if(e.cancelable)e.preventDefault();}},{passive:false});
+ document.addEventListener('touchmove',e=>{if(!tracking)return;if(document.body.classList.contains('gestureActive')){tracking=false;detail.style.transform='';return;}const t=e.touches[0],dx=t.clientX-startX,dy=t.clientY-startY;if(!started&&Math.abs(dy)>Math.abs(dx)){tracking=false;return;}if(dx<0){reset();return;}if(dx>8)started=true;if(started){drag=Math.min(innerWidth,dx);detail.style.transition='none';detail.style.transform='translateX('+drag+'px)';if(e.cancelable)e.preventDefault();}},{passive:false});
  document.addEventListener('touchend',()=>{if(!tracking)return;const shouldBack=started&&drag>Math.min(110,innerWidth*.28);if(shouldBack){detail.style.transition='transform .17s ease-out';detail.style.transform='translateX(100vw)';setTimeout(()=>{detail.style.transform='';detail.style.transition='';goBack();},165);tracking=false;started=false;}else reset();},{passive:true});document.addEventListener('touchcancel',reset,{passive:true});}
+// Each space keeps its own navigation position. A long-press switches spaces
+// without discarding the open personal detail screen.
+let currentSpace='me';
+const spacePositions={me:null,shared:null};
+function captureSpace(){
+ return {page,scroll:window.scrollY,history:navHistory.map(x=>({...x})),
+         itemDetail:itemDetail?{...itemDetail}:null,itemAdding,edit};
+}
+function switchSpace(target){
+ if(target===currentSpace)return;
+ spacePositions[currentSpace]=captureSpace();
+ currentSpace=target;
+ const saved=spacePositions[target];
+ if(saved){
+   navHistory=saved.history.map(x=>({...x}));
+   showPage(saved.page,false,true);
+   itemDetail=saved.itemDetail?{...saved.itemDetail}:null;
+   itemAdding=saved.itemAdding;
+   edit=saved.edit;
+   if(!['me','shared'].includes(page))renderDetail();
+   updateBackLabel();
+   window.scrollTo(0,saved.scroll);
+ }else{
+   navHistory=[];
+   showPage(target,true,true,0);
+ }
+ $('spaceName').textContent=target==='shared'?'共有':'自分';
+}
 function initSpaceGesture(){
  const overlay=$('spaceOverlay'),track=overlay.querySelector('.spaceTrack'),cards=[...overlay.querySelectorAll('.spacePreview')],dots=[...overlay.querySelectorAll('.spaceDots i')];
  let startX=0,startY=0,dx=0,armed=false,active=false,timer=null,origin='me',suppressClick=false;
@@ -393,15 +421,15 @@ function initSpaceGesture(){
   cards.forEach((c,i)=>c.classList.toggle('selected',i===index));
   dots.forEach((d,i)=>d.classList.toggle('on',i===index));
  }
- function start(){if(active)return;active=true;armed=false;suppressClick=true;origin=page==='shared'?'shared':'me';overlay.classList.remove('hidden');overlay.setAttribute('aria-hidden','false');document.body.classList.add('gestureActive');paint(origin==='me'?0:1,0,true);requestAnimationFrame(()=>overlay.classList.add('active'));}
- function end(commit){clearTimeout(timer);timer=null;if(!active){armed=false;return;}const original=origin==='me'?0:1;const target=commit&&((Math.abs(dx)>innerWidth*.20)||(Math.abs(dx)>65))?(dx<0?1:0):original;paint(target);setTimeout(()=>{overlay.classList.remove('active');overlay.classList.add('hidden');overlay.setAttribute('aria-hidden','true');document.body.classList.remove('gestureActive');active=false;dx=0;if(target!==original){navHistory=[];showPage(target?'shared':'me',true,true,0);} },230);}
- function excluded(el){return !!el.closest('input,select,textarea,a,[contenteditable],form,.detailNav,.monthNav,.periods');}
- document.addEventListener('touchstart',e=>{if(e.touches.length!==1||!['me','shared'].includes(page)||excluded(e.target))return;const t=e.touches[0];startX=t.clientX;startY=t.clientY;dx=0;armed=true;clearTimeout(timer);timer=setTimeout(()=>{if(armed)start()},350);},{passive:true});
+ function start(){if(active)return;active=true;armed=false;suppressClick=true;origin=currentSpace;overlay.classList.remove('hidden');overlay.setAttribute('aria-hidden','false');document.body.classList.add('gestureActive');paint(origin==='me'?0:1,0,true);requestAnimationFrame(()=>overlay.classList.add('active'));}
+ function end(commit){clearTimeout(timer);timer=null;if(!active){armed=false;return;}const original=origin==='me'?0:1;const target=commit&&((Math.abs(dx)>innerWidth*.20)||(Math.abs(dx)>65))?(dx<0?1:0):original;paint(target);setTimeout(()=>{overlay.classList.remove('active');overlay.classList.add('hidden');overlay.setAttribute('aria-hidden','true');document.body.classList.remove('gestureActive');active=false;dx=0;if(target!==original){switchSpace(target?'shared':'me');} },230);}
+ function excluded(el){return !!el.closest('input,select,textarea,a,button,[contenteditable],form,.detailNav,.monthNav,.periods,.projectModal,.cropModal,.splitModal,.themeModal');}
+ document.addEventListener('touchstart',e=>{if(e.touches.length!==1||excluded(e.target)||!$('splitModal').classList.contains('hidden')||!$('themeModal').classList.contains('hidden'))return;const t=e.touches[0];startX=t.clientX;startY=t.clientY;dx=0;armed=true;clearTimeout(timer);timer=setTimeout(()=>{if(armed)start()},350);},{passive:true});
  document.addEventListener('touchmove',e=>{if(!armed&&!active)return;const t=e.touches[0];dx=t.clientX-startX;const dy=t.clientY-startY;if(!active){if(Math.abs(dx)>12||Math.abs(dy)>12){clearTimeout(timer);armed=false;}return;}if(e.cancelable)e.preventDefault();paint(origin==='me'?0:1,Math.max(-innerWidth*.95,Math.min(innerWidth*.95,dx)),true);},{passive:false});
  document.addEventListener('touchend',()=>{if(active){end(true);setTimeout(()=>suppressClick=false,400);}else{clearTimeout(timer);armed=false;}},{passive:true});
  document.addEventListener('touchcancel',()=>end(false),{passive:true});
  document.addEventListener('click',e=>{if(suppressClick){e.preventDefault();e.stopImmediatePropagation();suppressClick=false;}},true);
- $('spacePicker').addEventListener('click',()=>{navHistory=[];showPage(page==='shared'?'me':'shared',true,true,0);});
+ $('spacePicker').addEventListener('click',()=>switchSpace(currentSpace==='shared'?'me':'shared'));
 }
 
 const APPEAR_KEY='putatu.v12.appearance';
