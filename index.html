@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#f7f7f8">
-<title>Putatu · v19</title>
+<title>Putatu · v20</title>
 <style>
 :root{--bg:#f7f7f8;--card:#fff;--text:#17181a;--muted:#777b82;--line:#e7e7ea;--blue:#2374ff;--green:#25b86f;--yellow:#f4c430;--orange:#ff8a32;--red:#ef5350;--purple:#7557c8}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif}
@@ -179,7 +179,7 @@ const blocked=!!storageMessage;
 function validState(s){
  if(!s||s.schemaVersion!==6||s.ownerId!=='self'||!s.months||Array.isArray(s.months)||typeof s.months!=='object'||!s.loanPayments||typeof s.loanPayments!=='object')return false;
  const scope=x=>['personal','shared'].includes(x.scope), named=x=>x&&typeof x.id==='string'&&typeof x.name==='string'&&x.name.length>0;
- if(!Array.isArray(s.fixedCosts)||!s.fixedCosts.every(x=>named(x)&&scope(x)&&validMoney(x.amount)))return false;
+ if(!Array.isArray(s.fixedCosts)||!s.fixedCosts.every(x=>named(x)&&scope(x)&&validMoney(x.amount)&&(!x.cadence||['monthly','annual'].includes(x.cadence))))return false;
  if(!Array.isArray(s.loans)||!s.loans.every(x=>named(x)&&scope(x)&&validMoney(x.balance)&&validMoney(x.monthly)))return false;
  if(!Array.isArray(s.savingsAccounts)||!s.savingsAccounts.every(x=>named(x)&&scope(x)&&['deposit','nisa','stocks','goal'].includes(x.kind)&&validMoney(x.openingBalance)&&(x.target===null||(validMoney(x.target)&&x.target>0))&&Array.isArray(x.members)&&(x.scope==='personal'||typeof x.sharedGoalId==='string')))return false;
  const all=[...s.fixedCosts,...s.loans,...s.savingsAccounts].map(x=>x.id);if(new Set(all).size!==all.length)return false;
@@ -192,7 +192,8 @@ function save(){if(blocked)return;try{localStorage.setItem(KEY,JSON.stringify(st
 function notice(){$('storageNotice').textContent=storageMessage;$('storageNotice').classList.toggle('hidden',!storageMessage);}
 function month(){if(!state.months[selectedMonth]){state.months[selectedMonth]={income:0,ratios:[50,30,20],freeUsed:0,savingsPlans:{},baseIncome:0,extraIncome:0};}const m=state.months[selectedMonth];if(m.baseIncome===undefined){m.baseIncome=m.income;m.extraIncome=0;}return m;}
 function budget(){const m=month(),f=Math.round(m.income*m.ratios[0]/100),fr=Math.min(m.income-f,Math.round(m.income*m.ratios[1]/100));return{fixed:f,free:fr,save:m.income-f-fr};}
-function fixedItems(){return[...state.fixedCosts,...state.loans.map(l=>({id:l.id,name:l.name,amount:l.monthly,scope:l.scope,loan:true}))];}
+function monthlyFixed(x){return x.cadence==='annual'?Math.round(x.amount/12):x.amount;}
+function fixedItems(){return[...state.fixedCosts.map(x=>({...x,amount:monthlyFixed(x)})),...state.loans.map(l=>({id:l.id,name:l.name,amount:l.monthly,scope:l.scope,loan:true}))];}
 // Shared expenses are a single source of truth. Personal totals count only this member's share.
 function personalFixedAmount(x){return x.scope==='shared'?splitFor(x.id,x.amount):x.amount;}
 function fixedTotal(scope){
@@ -219,7 +220,7 @@ function renderFixed(){
  const b=budget(),total=fixedTotal('personal'),over=total>b.fixed,items=fixedItems();
  const rows=items.map(x=>{
   const shared=x.scope==='shared',personal=personalFixedAmount(x);
-  const meta=shared?'共有から反映 · 全体 '+yen(x.amount):x.loan?'ローン返済':'毎月の固定費';
+  const meta=(x.cadence==='annual'?'年額 '+yen(state.fixedCosts.find(f=>f.id===x.id)?.amount||0)+' ÷ 12 · ':'')+(shared?'共有から反映 · 月額全体 '+yen(x.amount):x.loan?'ローン返済':'毎月の固定費');
   const icon=x.loan?'▣':'⌂';
   // Keep the existing scope pictogram and navigation; the amount is the user's responsibility.
   return listItem(x.loan?'loan':'fixed',x,meta,yen(personal),icon);
@@ -234,12 +235,13 @@ function renderFree(){const b=budget(),m=month(),over=m.freeUsed>b.free,left=b.f
 const kinds={deposit:'預金',nisa:'NISA',stocks:'株式',goal:'目的別貯蓄'};
 function listItem(type,x,meta,amount,icon){return '<div class="cleanItem"><button type="button" class="cleanOpen" data-open-item="'+type+'" data-id="'+esc(x.id)+'"><span class="cleanGlyph clean-'+type+'" aria-hidden="true">'+icon+'</span><span class="cleanName"><strong>'+esc(x.name)+'</strong><small>'+meta+'</small></span><strong class="cleanMoney">'+amount+'</strong><span class="chevron">›</span></button>'+scopeButton(x,type)+'</div>';}
 function savingItem(a){const p=month().savingsPlans[a.id]||0,bal=balance(a),ic={deposit:'▤',nisa:'↗',stocks:'▥',goal:'✦'}[a.kind]||'✦';return listItem('save',a,kinds[a.kind]+' · 残高 '+yen(bal)+(a.target!==null?' / 目標 '+yen(a.target):''),'予定 '+yen(p),ic)+(a.target!==null?'<div class="cleanProgress">'+progress(bal,a.target,'var(--yellow)')+'</div>':'');}
-function itemEditor(type,x){const f=type==='save'?field('name','貯蓄先の名前',x?.name||'',{required:true})+field('kind','種類',x?.kind||'goal',{select:Object.entries(kinds)})+field('balance','開始時点の残高（円）',x?.openingBalance??0,{number:true,required:true})+field('target','目標額（円・空欄可）',x?.target??'',{number:true}):type==='loan'?field('name','ローン名',x?.name||'',{required:true})+field('balance','確認済み残高（円）',x?.balance??'',{number:true,required:true})+field('monthly','毎月の返済額（円）',x?.monthly??'',{number:true,required:true}):field('name','項目名',x?.name||'',{required:true})+field('amount','毎月の金額（円）',x?.amount??'',{number:true,required:true});return form(type,f);}
+function itemEditor(type,x){const f=type==='save'?field('name','貯蓄先の名前',x?.name||'',{required:true})+field('kind','種類',x?.kind||'goal',{select:Object.entries(kinds)})+field('balance','開始時点の残高（円）',x?.openingBalance??0,{number:true,required:true})+field('target','目標額（円・空欄可）',x?.target??'',{number:true}):type==='loan'?field('name','ローン名',x?.name||'',{required:true})+field('balance','確認済み残高（円）',x?.balance??'',{number:true,required:true})+field('monthly','毎月の返済額（円）',x?.monthly??'',{number:true,required:true}):field('name','項目名',x?.name||'',{required:true})+field('amount','契約金額（円）',x?.amount??'',{number:true,required:true})+field('cadence','支払い周期',x?.cadence||'monthly',{select:[['monthly','毎月'],['annual','年1回（12か月に均等配分）']]});return form(type,f);}
 function renderItemDetail(){if(itemDetail?.type==='free')return '<div class="card"><h3>今月の自由費 使用額</h3><form data-form="free" id="freeForm">'+field('used','使用額（円）',month().freeUsed,{number:true,required:true})+'<p class="formError" id="formError"></p><button type="submit" class="action">保存</button></form></div>';const type=itemDetail?.type,x=type?collection(type).find(y=>y.id===itemDetail.id):null;if(!x)return'<p class="note">項目が見つかりません。</p>';if(edit)return itemEditor(type,x);
- const amount=type==='save'?balance(x):type==='loan'?x.balance:x.amount;
- let h='<div class="card hero"><span class="sub">'+(type==='save'?'現在の残高':type==='loan'?'ローン残高':'毎月の固定費')+'</span><div class="big">'+yen(amount)+'</div><div class="row"><span class="sub">'+scopeLabel(x.scope)+'</span>'+scopeButton(x,type)+'</div></div>';
+ const amount=type==='save'?balance(x):type==='loan'?x.balance:type==='fixed'?monthlyFixed(x):x.amount;
+ let h='<div class="card hero"><span class="sub">'+(type==='save'?'現在の残高':type==='loan'?'ローン残高':'毎月の固定費換算額')+'</span><div class="big">'+yen(amount)+'</div><div class="row"><span class="sub">'+scopeLabel(x.scope)+'</span>'+scopeButton(x,type)+'</div></div>';
+ if(type==='fixed'&&x.cadence==='annual')h+='<div class="card"><span class="sub">年契約の金額</span><div class="big">'+yen(x.amount)+'</div><p class="note">年額を12か月で割った月額 '+yen(monthlyFixed(x))+' を毎月の固定費予算に反映します。実際の請求月や支払済み状態とは別の予算換算です。</p></div>';
  if(type==='fixed'&&x.scope==='shared'){
-  h+='<div class="card"><div class="row"><span class="sub">共有から反映 · 自分の負担</span><strong>'+yen(splitFor(x.id,x.amount))+'</strong></div><p class="note">共有全体 '+yen(x.amount)+' のうち、自分の負担分だけを固定費合計に計上します。</p><button type="button" class="secondary" data-action="openSplit" data-id="'+esc(x.id)+'" data-kind="fixed">共有の分担を調整</button></div>';
+  h+='<div class="card"><div class="row"><span class="sub">共有から反映 · 自分の負担</span><strong>'+yen(splitFor(x.id,monthlyFixed(x)))+'</strong></div><p class="note">共有全体（月額換算） '+yen(monthlyFixed(x))+' のうち、自分の負担分だけを固定費合計に計上します。</p><button type="button" class="secondary" data-action="openSplit" data-id="'+esc(x.id)+'" data-kind="fixed">共有の分担を調整</button></div>';
 }
 if(type==='loan'&&x.scope==='shared'){
   h+='<div class="card"><div class="row"><span class="sub">共有から反映 · 自分の返済負担</span><strong>'+yen(splitFor(x.id,x.monthly))+'</strong></div><button type="button" class="secondary" data-action="openSplit" data-id="'+esc(x.id)+'" data-kind="fixed">共有の分担を調整</button></div>';
@@ -380,7 +382,7 @@ function collection(type){return type==='fixed'?state.fixedCosts:type==='loan'?s
 function submit(event){const f=event.target;if(!f.matches('form[data-form]'))return;event.preventDefault();const type=f.dataset.form,data=new FormData(f),error=$('formError');const fail=t=>{error.textContent=t;};
  if(type==='free'){const used=moneyValue(data.get('used'));if(used===null)return fail('使用額は0円以上の整数で入力してください。');month().freeUsed=used;itemDetail=null;itemAdding=null;refresh();toast('使用額を更新しました');return;}
  const name=String(data.get('name')||'').trim();if(!name)return fail('項目名を入力してください。');const list=collection(type),existing=edit?list.find(x=>x.id===edit):null,scope=existing?.scope||'personal';let item;
- if(type==='fixed'){const amount=moneyValue(data.get('amount'));if(amount===null)return fail('金額は0円以上の整数で入力してください。');item={id:existing?.id||id(),name,amount,scope};}
+ if(type==='fixed'){const amount=moneyValue(data.get('amount'));if(amount===null)return fail('金額は0円以上の整数で入力してください。');item={id:existing?.id||id(),name,amount,scope,cadence:data.get('cadence')==='annual'?'annual':'monthly'};}
  if(type==='loan'){const balance=moneyValue(data.get('balance')),monthly=moneyValue(data.get('monthly'));if(balance===null||monthly===null)return fail('残高・返済額は0円以上の整数で入力してください。');item={id:existing?.id||id(),name,balance,monthly,scope};}
  if(type==='save'){const openingBalance=moneyValue(data.get('balance')),raw=data.get('target'),target=raw===''?null:moneyValue(raw);if(openingBalance===null||target===0||(raw!==''&&target===null))return fail('残高は0円以上、目標額は1円以上の整数か空欄で入力してください。');item={id:existing?.id||id(),name,scope,kind:data.get('kind'),openingBalance,target,ownerId:state.ownerId,sharedGoalId:existing?.sharedGoalId||(scope==='shared'?id():null),members:scope==='shared'?[state.ownerId,'partner']:[state.ownerId]};}
  if(existing)list[list.indexOf(existing)]=item;else list.push(item);edit=null;itemAdding=null;itemDetail=null;refresh();toast('保存しました');}
@@ -405,10 +407,10 @@ function incomeUpdate(){const inp=$('income');if(!inp)return;const n=moneyValue(
 function moveMonth(delta){const[y,m]=selectedMonth.split('-').map(Number),d=new Date(y,m-1+delta,1);if(d.getFullYear()<2000||d.getFullYear()>2199)return;selectedMonth=monthKey(d);edit=null;month();syncIncomeFields();refresh();}
 
 function initBackSwipe(){let startX=0,startY=0,drag=0,tracking=false,started=false;
- const detail=$('detail');function reset(){detail.style.transition='transform .22s cubic-bezier(.2,.8,.2,1)';detail.style.transform='translateX(0)';setTimeout(()=>{detail.style.transition='';detail.style.transform='';},240);tracking=false;started=false;}
- document.addEventListener('touchstart',e=>{if(e.touches.length!==1||page==='me'||page==='shared'||!$('splitModal').classList.contains('hidden'))return;const t=e.touches[0];if(t.clientX>34||e.target.closest('input,select,textarea,[contenteditable]'))return;startX=t.clientX;startY=t.clientY;drag=0;tracking=true;started=false;},{passive:true});
- document.addEventListener('touchmove',e=>{if(!tracking)return;if(document.body.classList.contains('gestureActive')){tracking=false;detail.style.transform='';return;}const t=e.touches[0],dx=t.clientX-startX,dy=t.clientY-startY;if(!started&&Math.abs(dy)>Math.abs(dx)){tracking=false;return;}if(dx<0){reset();return;}if(dx>8)started=true;if(started){drag=Math.min(innerWidth,dx);detail.style.transition='none';detail.style.transform='translateX('+drag+'px)';if(e.cancelable)e.preventDefault();}},{passive:false});
- document.addEventListener('touchend',()=>{if(!tracking)return;const shouldBack=started&&drag>Math.min(110,innerWidth*.28);if(shouldBack){detail.style.transition='transform .17s ease-out';detail.style.transform='translateX(100vw)';setTimeout(()=>{detail.style.transform='';detail.style.transition='';goBack();},165);tracking=false;started=false;}else reset();},{passive:true});document.addEventListener('touchcancel',reset,{passive:true});}
+ const detail=$('detail');let sharedSwipe=false;function reset(){detail.style.transition='transform .22s cubic-bezier(.2,.8,.2,1)';detail.style.transform='translateX(0)';setTimeout(()=>{detail.style.transition='';detail.style.transform='';},240);tracking=false;started=false;}
+ document.addEventListener('touchstart',e=>{if(e.touches.length!==1||page==='me'||(page==='shared'&&!sharedSection)||!$('splitModal').classList.contains('hidden'))return;const t=e.touches[0];if(t.clientX>34||e.target.closest('input,select,textarea,[contenteditable]'))return;startX=t.clientX;startY=t.clientY;drag=0;tracking=true;started=false;sharedSwipe=page==='shared';},{passive:true});
+ document.addEventListener('touchmove',e=>{if(!tracking)return;if(document.body.classList.contains('gestureActive')){tracking=false;detail.style.transform='';return;}const t=e.touches[0],dx=t.clientX-startX,dy=t.clientY-startY;if(!started&&Math.abs(dy)>Math.abs(dx)){tracking=false;return;}if(dx<0){reset();return;}if(dx>8)started=true;if(started){drag=Math.min(innerWidth,dx);if(!sharedSwipe){detail.style.transition='none';detail.style.transform='translateX('+drag+'px)';}if(e.cancelable)e.preventDefault();}},{passive:false});
+ document.addEventListener('touchend',()=>{if(!tracking)return;const shouldBack=started&&drag>Math.min(110,innerWidth*.28);if(shouldBack&&sharedSwipe){sharedSection=null;renderShared();window.scrollTo(0,0);tracking=false;started=false;return;}if(shouldBack){detail.style.transition='transform .17s ease-out';detail.style.transform='translateX(100vw)';setTimeout(()=>{detail.style.transform='';detail.style.transition='';goBack();},165);tracking=false;started=false;}else reset();},{passive:true});document.addEventListener('touchcancel',reset,{passive:true});}
 // Each space keeps its own navigation position. A long-press switches spaces
 // without discarding the open personal detail screen.
 let currentSpace='me';
@@ -494,6 +496,10 @@ function finishCrop(){const c=cropState;if(!c)return;const canvas=document.creat
 function closeCrop(){if(cropState)URL.revokeObjectURL(cropState.url);cropState=null;$('cropModal').classList.add('hidden');$('cropModal').setAttribute('aria-hidden','true');}
 function initProject(){
  $('sharedLive').addEventListener('click',e=>{const back=e.target.closest('[data-shared-back]');if(back){sharedSection=null;renderShared();window.scrollTo(0,0);return;}const tile=e.target.closest('[data-shared-section]');if(tile){sharedSection=tile.dataset.sharedSection;renderShared();window.scrollTo(0,0);return;}const b=e.target.closest('[data-project]');if(b)showProject(b.dataset.project);});
+ let projectEdge=null;
+ const pm=$('projectModal');
+ pm.addEventListener('touchstart',e=>{const t=e.touches[0];projectEdge=t&&t.clientX<36?{x:t.clientX,y:t.clientY}:null;},{passive:true});
+ pm.addEventListener('touchend',e=>{if(!projectEdge)return;const t=e.changedTouches[0];if(t&&t.clientX-projectEdge.x>95&&Math.abs(t.clientY-projectEdge.y)<75){$('projectClose').click();}projectEdge=null;},{passive:true});
  $('projectClose').addEventListener('click',()=>{$('projectModal').classList.add('hidden');$('projectModal').setAttribute('aria-hidden','true');activeProjectId=null;});
  $('projectSettings').addEventListener('click',()=>{projectEditOpen=!projectEditOpen;renderProject();});
  $('projectIconInput').addEventListener('change',e=>{beginCrop(e.target.files[0],'icon');e.target.value='';});
