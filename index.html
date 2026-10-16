@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#f7f7f8">
-<title>Putatu · v24</title>
+<title>Putatu · v25</title>
 <style>
 :root{--bg:#f7f7f8;--card:#fff;--text:#17181a;--muted:#777b82;--line:#e7e7ea;--blue:#2374ff;--green:#25b86f;--yellow:#f4c430;--orange:#ff8a32;--red:#ef5350;--purple:#7557c8}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif}
@@ -64,14 +64,12 @@ h2{font-size:16px;letter-spacing:-.03em}.card{border:1px solid #edf2fa;border-ra
 .reminderSettingsLink svg{width:17px;height:17px;margin-right:5px}
 @media(max-width:360px){.incomeHero .pieRow{grid-template-columns:minmax(112px,.85fr) minmax(0,1fr);gap:9px}.incomeHero .heroLegend .legendItem{padding:9px 0 9px 6px}.incomeHero .heroLegend .legendAmount{font-size:16px}.incomeHero .pieCenter strong{font-size:17px}}
 
-/* v24: the bird is a rare, topmost Easter egg, independent of finance cards. */
-#carryBird{position:fixed;z-index:2147483000;top:0;left:0;width:62px;height:62px;border:0;background:transparent;color:#4b91cf;display:grid;place-items:center;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;filter:drop-shadow(0 2px 3px #284d6a38);transform:translate3d(-90px,0,0);will-change:transform;pointer-events:auto}
-#carryBird svg{width:42px;height:42px;stroke:currentColor;stroke-width:1.6;fill:#d5ecfa;stroke-linejoin:round;stroke-linecap:round}
-#carryBird.birdFlight{animation:carryFlight 12s ease-in-out both}
-@keyframes carryFlight{0%{transform:translate3d(-90px,0,0) rotate(-8deg)}18%{transform:translate3d(calc(24vw - 20px),-15px,0) rotate(4deg)}42%{transform:translate3d(calc(42vw - 20px),5px,0) rotate(-2deg)}67%{transform:translate3d(calc(62vw - 20px),-12px,0) rotate(4deg)}84%{transform:translate3d(calc(79vw - 20px),0,0) rotate(-4deg)}100%{transform:translate3d(calc(100vw + 90px),-18px,0) rotate(0deg)}}
-#carryBird .wing{transform-origin:27px 20px;animation:carryWing .48s ease-in-out infinite alternate}
-@keyframes carryWing{from{transform:rotate(-10deg)}to{transform:rotate(17deg)}}
-#carryBird.birdFlight:focus-visible{outline:3px solid #247ee0;border-radius:50%}
+/* v25: transparent monoline bird, flapping wing and quick DVD-style bounces. */
+#carryBird{position:fixed;z-index:2147483000;top:0;left:0;width:48px;height:48px;padding:0;border:0;background:transparent;color:#6299d0;display:grid;place-items:center;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transform:translate3d(-80px,-80px,0);will-change:transform;pointer-events:auto;filter:drop-shadow(0 1px 1px #d8eaf8)}
+#carryBird svg{width:32px;height:32px;overflow:visible;stroke:currentColor;stroke-width:2.5;fill:none;stroke-linejoin:round;stroke-linecap:round}
+#carryBird .birdWing{transform-box:view-box;transform-origin:21px 23px;animation:carryWing .28s ease-in-out infinite alternate}
+@keyframes carryWing{from{transform:rotate(-24deg)}to{transform:rotate(27deg)}}
+#carryBird:focus-visible{outline:2px solid #247ee0;border-radius:50%}
 #carryReveal{position:fixed;inset:0;z-index:2147483001;background:#122c4e70;display:grid;place-items:center;padding:22px;box-sizing:border-box}
 #carryReveal .carryGift{background:#fff;color:#22344b;border-radius:26px;padding:30px 24px 24px;width:min(100%,360px);box-shadow:0 16px 50px #152b4d3a;text-align:center;animation:carryPop .3s ease-out}
 @keyframes carryPop{from{transform:scale(.88);opacity:0}to{transform:scale(1);opacity:1}}
@@ -81,7 +79,7 @@ h2{font-size:16px;letter-spacing:-.03em}.card{border:1px solid #edf2fa;border-ra
 #carryReveal .carryAmount{font-size:32px;font-weight:800;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
 #carryReveal .carryDesc{font-size:12px;color:#7b899b;line-height:1.8;margin:12px 0 20px}
 #carryReveal .carryClose{background:#287fe9;border:0;border-radius:14px;color:white;padding:12px 30px;font-weight:700;min-width:140px}
-@media(prefers-reduced-motion:reduce){#carryBird.birdFlight{animation-duration:22s}#carryBird .wing{animation:none}#carryReveal .carryGift{animation:none}}
+@media(prefers-reduced-motion:reduce){#carryBird .birdWing{animation:none}#carryReveal .carryGift{animation:none}}
 </style>
 
 <style>
@@ -705,9 +703,11 @@ function carryBalance(){
  });
  return {amount,months};
 }
-const BIRD_SVG='<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M7 27c7-1 10-9 16-9 3-5 8-7 12-5l5 3-5 3c1 10-8 18-18 17-6 0-10-4-10-9Z"/><path class="wing" d="M20 22c-4-9 0-15 4-17 1 7 8 9 9 16-2 5-8 8-13 1Z"/><path d="m14 35-2 6m8-5 2 5M35 20l8 2-8 3"/><circle cx="32" cy="16" r="1.2" fill="#284f7c" stroke="none"/></svg>';
-let birdShown=false,birdTimeout=null;
-function hideCarryBird(){const bird=$('carryBird');if(bird)bird.remove();}
+// The small bird keeps the reference's round head, tiny beak and simple outline.
+// No fill: cards and text remain visible through the body and wings.
+const BIRD_SVG='<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M9 30c3-3 7-5 11-5 3-6 8-11 15-10 4 1 6 4 6 7l5 2-5 2c-2 8-9 12-18 11-5-1-9-4-14-7Z"/><path class="birdWing" d="M23 27C16 24 13 16 14 8c4 5 8 6 12 8 5 3 6 8 4 12"/><path d="m22 37-2 5m7-5 1 5"/><circle cx="37" cy="21" r="1" fill="currentColor" stroke="none"/></svg>';
+let birdShown=false,birdTimeout=null,birdFrame=0,birdMotion=null;
+function hideCarryBird(){if(birdFrame){cancelAnimationFrame(birdFrame);birdFrame=0;}birdMotion=null;const bird=$('carryBird');if(bird)bird.remove();}
 function showCarryGift(){
  hideCarryBird();
  const {amount,months}=carryBalance();
@@ -720,23 +720,39 @@ function showCarryGift(){
  document.addEventListener('keydown',escapeCarry);
  $('carryClose').focus();
 }
+function animateCarryBird(time){
+ const m=birdMotion,el=$('carryBird');if(!m||!el||document.hidden)return;
+ if(!m.last)m.last=time;
+ const dt=Math.min((time-m.last)/1000,.045);m.last=time;
+ const pad=4,maxX=Math.max(pad,innerWidth-48-pad),maxY=Math.max(pad,innerHeight-48-pad);
+ m.x+=m.vx*dt;m.y+=m.vy*dt;
+ // Instant reversal, like a classic DVD screensaver; no long turn animation.
+ if(m.x<pad){m.x=pad+(pad-m.x);m.vx=Math.abs(m.vx)}
+ if(m.x>maxX){m.x=maxX-(m.x-maxX);m.vx=-Math.abs(m.vx)}
+ if(m.y<pad){m.y=pad+(pad-m.y);m.vy=Math.abs(m.vy)}
+ if(m.y>maxY){m.y=maxY-(m.y-maxY);m.vy=-Math.abs(m.vy)}
+ // Flip direction immediately; no visual difference based on the saved amount.
+ const flip=m.vx<0?-1:1;
+ el.style.transform='translate3d('+m.x.toFixed(1)+'px,'+m.y.toFixed(1)+'px,0) scaleX('+flip+')';
+ if(time-m.started>12500){hideCarryBird();return;}
+ birdFrame=requestAnimationFrame(animateCarryBird);
+}
 function showCarryBird(){
  if(birdShown||document.hidden||$('carryReveal'))return;
  birdShown=true;
- const bird=document.createElement('button');bird.type='button';bird.id='carryBird';bird.setAttribute('aria-label','小さな鳥を捕まえる');bird.title='';bird.innerHTML=BIRD_SVG;
- const vh=window.innerHeight;
- bird.style.top=Math.round(Math.max(76,Math.min(vh-100,vh*(.18+Math.random()*.54))))+'px';
+ const bird=document.createElement('button');bird.type='button';bird.id='carryBird';bird.setAttribute('aria-label','小さな鳥を捕まえる');bird.innerHTML=BIRD_SVG;
  document.body.appendChild(bird);
  bird.addEventListener('click',e=>{e.stopPropagation();showCarryGift();});
- bird.addEventListener('animationend',e=>{if(e.animationName==='carryFlight')hideCarryBird();});
- requestAnimationFrame(()=>bird.classList.add('birdFlight'));
+ const angle=(Math.random()*.7+.2)*(Math.random()<.5?-1:1);
+ const speed=210; // px/s, a little brisker than the previous flight.
+ birdMotion={x:Math.max(4,Math.random()*Math.max(4,innerWidth-52)),y:Math.max(4,Math.random()*Math.max(4,innerHeight-52)),vx:Math.cos(angle)*speed*(Math.random()<.5?-1:1),vy:Math.sin(angle)*speed,last:0,started:performance.now()};
+ birdFrame=requestAnimationFrame(animateCarryBird);
 }
 function initCarryBird(){
- // A rare, once-per-session encounter. ?bird=preview is for testing only.
+ // Rare encounter, once per app launch; ?bird=preview forces the test encounter.
  const preview=new URLSearchParams(location.search).get('bird')==='preview';
- if(!preview&&Math.random()>=.18)return;
- const delay=preview?1200:8000+Math.floor(Math.random()*17000);
- birdTimeout=setTimeout(showCarryBird,delay);
+ if(!preview&&Math.random()>=.30)return;
+ birdTimeout=setTimeout(showCarryBird,preview?1200:8000+Math.floor(Math.random()*17000));
  document.addEventListener('visibilitychange',()=>{if(document.hidden){hideCarryBird();if(birdTimeout){clearTimeout(birdTimeout);birdTimeout=null;}}});
 }
 function init(){seedReminderExamples();initReminderUI();initCarryBird();initAppearance();initProject();document.addEventListener('click',click);document.addEventListener('submit',submit);document.addEventListener('change',change);document.addEventListener('input',e=>{if(e.target.dataset.plan)updatePlan(e.target);});initSpaceGesture();initBackSwipe();$('splitModal').addEventListener('click',e=>{if(e.target===$('splitModal'))closeSplit();});$('backHome').addEventListener('click',goBack);$('goHome').addEventListener('click',goHome);$('prevMonth').addEventListener('click',()=>moveMonth(-1));$('nextMonth').addEventListener('click',()=>moveMonth(1));document.querySelectorAll('.period').forEach(btn=>btn.addEventListener('click',()=>{period=Number(btn.dataset.period);document.querySelectorAll('.period').forEach(b=>{b.classList.toggle('active',b===btn);b.setAttribute('aria-pressed',b===btn);});drawBars($('myChart'),period,month().income);}));document.addEventListener('change',e=>{if(e.target.id==='income')incomeUpdate();if(e.target.name==='splitMode')updateSplitControls();});document.getElementById('splitPct').addEventListener('input',()=>{if(!splitEditing)return;const {total,id}=splitEditing;$('splitMine').value=id==='default'?0:Math.round(total*Number($('splitPct').value)/100);updateSplitControls();});document.getElementById('splitMine').addEventListener('input',()=>{if(!splitEditing)return;const v=Number($('splitMine').value)||0;$('splitPct').value=splitEditing.total?Math.round(v/splitEditing.total*100):0;updateSplitControls();});document.addEventListener('input',e=>{if(e.target.dataset.ratio!==undefined)adjustRatio(Number(e.target.dataset.ratio),Number(e.target.value));if(e.target.dataset.ratioNumber!==undefined)adjustRatio(Number(e.target.dataset.ratioNumber),Number(e.target.value));});$('exportData').addEventListener('click',()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='putatu-backup-'+monthKey(new Date())+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);toast('バックアップを書き出しました');});month();syncIncomeFields();showPage('me',false,true);save();}
