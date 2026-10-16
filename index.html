@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#f7f7f8">
-<title>Putatu · v26</title>
+<title>Putatu · v27</title>
 <style>
 :root{--bg:#f7f7f8;--card:#fff;--text:#17181a;--muted:#777b82;--line:#e7e7ea;--blue:#2374ff;--green:#25b86f;--yellow:#f4c430;--orange:#ff8a32;--red:#ef5350;--purple:#7557c8}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif}
@@ -79,6 +79,19 @@ h2{font-size:16px;letter-spacing:-.03em}.card{border:1px solid #edf2fa;border-ra
 #carryReveal .carryDesc{font-size:12px;color:#7b899b;line-height:1.8;margin:12px 0 20px}
 #carryReveal .carryClose{background:#287fe9;border:0;border-radius:14px;color:white;padding:12px 30px;font-weight:700;min-width:140px}
 @media(prefers-reduced-motion:reduce){#carryBird .birdWing{animation:none}#carryReveal .carryGift{animation:none}}
+
+/* v27: quiet, bottom-of-home income remainder */
+.homeRemaining{margin:18px 3px 7px;padding:12px 13px 10px;background:rgba(255,255,255,.63);border:1px solid rgba(204,221,239,.45);border-radius:14px;box-shadow:none}
+.remainingTop{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--muted);font-weight:650;margin-bottom:7px}
+.remainingTop small{font-size:9px;font-weight:500;margin-left:3px;opacity:.85}
+.remainingPct{font-size:10px;font-weight:600;color:#6e9a9b}
+.remainingTrack{height:3px;border-radius:9px;background:#e4edf4;overflow:hidden}
+.remainingTrack>span{display:block;height:100%;border-radius:9px;background:#8ed7c7;transition:width .3s ease}
+.remainingNumbers{display:flex;align-items:baseline;gap:3px;margin-top:7px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.remainingNumbers strong{font-size:14px;color:var(--ink);font-weight:750}
+.remainingNumbers span{font-size:11px;color:var(--muted)}
+.remainingNumbers .remainingNegative{color:#ca6370}
+.remainingNote{font-size:9px;color:var(--muted);line-height:1.55;margin:7px 0 0;opacity:.85}
 </style>
 
 <style>
@@ -189,6 +202,7 @@ body[data-style="clear"] .sharedHeader{background:linear-gradient(145deg,#ffffff
 <div class="hidden" aria-hidden="true"><span id="fixedLabel"></span><span id="freeLabel"></span><span id="saveLabel"></span><span id="fixedVal"></span><span id="freeVal"></span><span id="saveVal"></span><span id="totalVal"></span></div></div>
 <div id="homeDetails"></div>
 <div class="card chartCard"><div class="row"><h2>収入の推移</h2><span class="sub">月別収入</span></div><div class="periods"><button type="button" class="period active" data-period="1">1ヶ月</button><button type="button" class="period" data-period="3">3ヶ月</button><button type="button" class="period" data-period="6">6ヶ月</button><button type="button" class="period" data-period="12">12ヶ月</button></div><div class="chartFrame"><div id="incomeYAxis" class="yAxis"></div><div class="chart" id="myChart"></div></div><div id="chartDetail" class="chartDetail" role="status">棒をタップすると、その月の収入を確認できます。</div><p class="note chartNote">＊はサンプル値です。実際の収入を登録すると置き換わります。</p></div>
+<div id="homeRemaining" class="homeRemaining" aria-live="polite"></div>
 </section>
 <section id="detail" class="hidden" aria-labelledby="detailTitle"><div class="detailNav"><button type="button" id="backHome" aria-label="一つ前に戻る" title="戻る">‹</button><h2 id="detailTitle" tabindex="-1"></h2></div><button type="button" id="goHome" aria-label="自分のホームに戻る" title="ホーム" class="textButton" style="margin:8px 0 14px">⌂</button><div id="detailBody"></div></section><section id="shared" class="hidden"><div id="sharedLive"></div></section>
 <div id="projectModal" class="projectModal hidden" aria-hidden="true"><div class="projectSheet" role="dialog" aria-modal="true" aria-label="プロジェクト"><div class="projectTop"><button type="button" id="projectClose" class="iconOnly" aria-label="閉じる">‹</button><strong id="projectTitle">プロジェクト</strong><button type="button" id="projectSettings" class="iconOnly" aria-label="プロジェクトの見た目を編集" title="見た目を編集">✎</button></div><div id="projectCover" class="projectCover"></div><div class="projectAmountCard"><span class="sub">現在の貯蓄</span><strong id="projectBalance"></strong><span id="projectGoal" class="sub"></span><div id="projectProgress" class="projectProgress"><i></i></div></div><div id="projectEdit" class="projectEdit hidden"><h3>このプロジェクトのデザイン</h3><div class="projectPhotoPick"><label>アイコン写真<input id="projectIconInput" type="file" accept="image/*" hidden></label><label>ヘッダー写真<input id="projectHeaderInput" type="file" accept="image/*" hidden></label></div><div class="themeCaption">テーマ（未設定なら全体テーマを使用）</div><div class="projectThemeOptions" id="projectThemeOptions"><button data-project-color="inherit">全体に合わせる</button><button data-project-color="blue">BLUE</button><button data-project-color="red">RED</button><button data-project-color="green">GREEN</button></div><div class="projectPhotoPick"><button id="projectRemoveIcon" type="button">アイコンを外す</button><button id="projectRemoveHeader" type="button">ヘッダーを外す</button></div></div></div></div>
@@ -410,6 +424,19 @@ const savings='<button type="button" class="homeCardButton" data-detail="save"><
 const fixed='<button type="button" class="homeCardButton" data-detail="fixed"><div class="row"><span class="homePictogram fixedPict" aria-hidden="true">⌂</span><span class="cardArrow">›</span></div><div class="sub">固定費の管理</div><div class="big">'+yen(total)+'</div><div class="sub">本人負担 '+all+'件 · 予算 '+yen(b.fixed)+'</div></button>';
 const loan=state.loans.length?'<button type="button" class="homeCardButton loanHome" data-detail="loan"><div class="row"><h2><span class="homePictogram loanPict" aria-hidden="true">▣</span>ローン・返済状況</h2><span class="cardArrow">›</span></div><div class="big">'+yen(sum(state.loans.map(l=>personalFixedAmount({id:l.id,scope:l.scope,amount:l.monthly}))))+'</div><div class="sub">毎月の本人返済額 · 支払い確認 '+paid+' / '+state.loans.length+'件</div></button>':'';
 $('homeDetails').innerHTML=reminderCard('personal')+free+'<div class="homePair">'+savings+fixed+'</div>'+loan;}
+function renderRemaining(){
+ const m=month(),income=m.income;
+ // Fixed costs are scheduled monthly equivalents, not confirmed withdrawals.
+ // Savings transfers are not expenses, so they are deliberately excluded.
+ const scheduled=fixedTotal(),used=m.freeUsed;
+ const remaining=income-scheduled-used;
+ const pct=income>0?Math.max(0,Math.min(100,remaining/income*100)):0;
+ const el=$('homeRemaining');if(!el)return;
+ el.innerHTML='<div class="remainingTop"><span>今月の残り <small>概算</small></span><span class="remainingPct">'+(income?Math.round(remaining/income*100):0)+'%</span></div>'+
+ '<div class="remainingTrack" role="progressbar" aria-label="収入に対する今月の残りの割合" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+Math.round(pct)+'"><span style="width:'+pct.toFixed(2)+'%"></span></div>'+
+ '<div class="remainingNumbers"><strong class="'+(remaining<0?'remainingNegative':'')+'">'+(remaining<0?'−':'')+yen(Math.abs(remaining))+'</strong><span> / '+yen(income)+'</span></div>'+
+ '<p class="remainingNote">収入 − 登録済み固定費（本人負担・月額換算）− 自由費の入力済み使用額。貯蓄への振り分けは支出に含みません。実際の口座残高ではありません。</p>';
+}
 function renderRatio(){const m=month();return '<div class="card compactCard"><div class="row"><h2>収入</h2><span class="sub">'+selectedMonth.replace('-',' / ')+'</span></div><div class="modeTabs"><button type="button" class="modeBtn '+(prefs.incomeMode==='manual'?'selected':'')+'" data-action="incomeMode" data-mode="manual">手動</button><button type="button" class="modeBtn '+(prefs.incomeMode==='auto'?'selected':'')+'" data-action="incomeMode" data-mode="auto">自動連携</button></div>'+(prefs.incomeMode==='auto'?'<div class="autoNotice"><span class="autoIcon">⌁</span><div><strong>自動連携は準備中</strong><small>銀行接続はまだ利用できません。収入は引き続き手動で登録できます。</small></div></div>':'')+'<div class="fieldGrid"><div><label for="baseIncome">基本収入（円）</label><input id="baseIncome" type="number" min="0" max="'+LIMIT+'" inputmode="numeric" value="'+m.baseIncome+'"></div><div><label for="extraIncome">追加収入（円）</label><input id="extraIncome" type="number" min="0" max="'+LIMIT+'" inputmode="numeric" value="'+m.extraIncome+'"></div></div><div class="row incomeTotal"><span>合計</span><strong>'+yen(m.income)+'</strong></div><div class="formActions"><button type="button" class="action" data-action="saveIncome">収入を保存</button><button type="button" class="secondary" data-action="copyIncome">前月をコピー</button></div><p id="incomeError" class="formError" role="alert"></p></div><div class="card compactCard"><div class="row"><h2>分配</h2><span class="sub">自由に調整</span></div><div id="ratioControls"></div><p id="ratioError" class="formError" role="alert"></p></div>'}
 let itemDetail=null,itemAdding=null;
 let ratioDraft=null,ratioDraftMonth=null;
@@ -494,7 +521,7 @@ function drawBars(el,count,base,isShared=false){
  });
 }
 function syncIncomeFields(){if(page==='ratio'){const inp=$('income');if(inp)inp.value=month().income;ratioSliders();}}
-function render(){const m=month(),b=budget();$('monthTitle').textContent=selectedMonth.replace('-','年 ')+'月';['fixed','free','save'].forEach((k,i)=>{$(k+'Val').textContent=yen(b[k]);$(k+'Label').textContent=['固定費','自由費','貯蓄'][i]+' '+m.ratios[i]+'%';$(k+'Legend').textContent=m.ratios[i]+'%';});$('totalVal').textContent=yen(m.income);$('pieTotal').textContent='100%';$('fixedAlloc').textContent=yen(b.fixed);$('freeAlloc').textContent=yen(b.free);$('saveAlloc').textContent=yen(b.save);$('heroIncome').textContent=yen(m.income);$('incomeBreakdown').textContent='基本 '+yen(m.baseIncome??m.income)+'  ·  追加 '+yen(m.extraIncome??0);$('pie').style.background='conic-gradient(var(--blue) 0deg '+m.ratios[0]*3.6+'deg,var(--green) '+m.ratios[0]*3.6+'deg '+(m.ratios[0]+m.ratios[1])*3.6+'deg,var(--yellow) '+(m.ratios[0]+m.ratios[1])*3.6+'deg 360deg)';$('pie').setAttribute('aria-label','収入 '+yen(m.income)+'。固定費 '+m.ratios[0]+'%、自由費 '+m.ratios[1]+'%、貯蓄 '+m.ratios[2]+'%');drawBars($('myChart'),period,m.income);if($('sharedChart'))drawBars($('sharedChart'),6,240000,true);renderHome();renderShared();updateNotificationBell();if(!['me','shared'].includes(page))renderDetail();notice();}
+function render(){const m=month(),b=budget();$('monthTitle').textContent=selectedMonth.replace('-','年 ')+'月';['fixed','free','save'].forEach((k,i)=>{$(k+'Val').textContent=yen(b[k]);$(k+'Label').textContent=['固定費','自由費','貯蓄'][i]+' '+m.ratios[i]+'%';$(k+'Legend').textContent=m.ratios[i]+'%';});$('totalVal').textContent=yen(m.income);$('pieTotal').textContent='100%';$('fixedAlloc').textContent=yen(b.fixed);$('freeAlloc').textContent=yen(b.free);$('saveAlloc').textContent=yen(b.save);$('heroIncome').textContent=yen(m.income);$('incomeBreakdown').textContent='基本 '+yen(m.baseIncome??m.income)+'  ·  追加 '+yen(m.extraIncome??0);$('pie').style.background='conic-gradient(var(--blue) 0deg '+m.ratios[0]*3.6+'deg,var(--green) '+m.ratios[0]*3.6+'deg '+(m.ratios[0]+m.ratios[1])*3.6+'deg,var(--yellow) '+(m.ratios[0]+m.ratios[1])*3.6+'deg 360deg)';$('pie').setAttribute('aria-label','収入 '+yen(m.income)+'。固定費 '+m.ratios[0]+'%、自由費 '+m.ratios[1]+'%、貯蓄 '+m.ratios[2]+'%');drawBars($('myChart'),period,m.income);if($('sharedChart'))drawBars($('sharedChart'),6,240000,true);renderHome();renderRemaining();renderShared();updateNotificationBell();if(!['me','shared'].includes(page))renderDetail();notice();}
 function collection(type){return type==='fixed'?state.fixedCosts:type==='loan'?state.loans:state.savingsAccounts;}
 function submit(event){const f=event.target;if(!f.matches('form[data-form]'))return;event.preventDefault();const type=f.dataset.form,data=new FormData(f),error=$('formError');const fail=t=>{error.textContent=t;};
  if(type==='free'){const used=moneyValue(data.get('used'));if(used===null)return fail('使用額は0円以上の整数で入力してください。');month().freeUsed=used;confirmFreeMonth(selectedMonth);itemDetail=null;itemAdding=null;refresh();toast('使用額を更新しました');return;}
@@ -705,15 +732,20 @@ function carryBalance(){
 // The small bird keeps the reference's round head, tiny beak and simple outline.
 // No fill: cards and text remain visible through the body and wings.
 const BIRD_SVG='<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M9 30Q15 26 21 26Q27 17 35 18Q40 18 41 23L45 25L41 27Q39 34 31 35Q20 38 9 30Z"/><path class="birdWing" d="M22 27Q15 23 15 13Q19 18 25 19Q30 21 29 27"/><path d="M20 36L18 40M26 36L25 40"/><circle cx="37" cy="23" r="1" fill="currentColor" stroke="none"/></svg>';
-let birdShown=false,birdTimeout=null,birdFrame=0,birdMotion=null;
-function hideCarryBird(){if(birdFrame){cancelAnimationFrame(birdFrame);birdFrame=0;}birdMotion=null;const bird=$('carryBird');if(bird)bird.remove();}
+let birdTimeout=null,birdFrame=0,birdMotion=null,birdLastEnd=0,birdPreview=false;
+function hideCarryBird(){
+ if(birdFrame){cancelAnimationFrame(birdFrame);birdFrame=0;}
+ birdMotion=null;const bird=$('carryBird');if(bird)bird.remove();
+ birdLastEnd=Date.now();
+ scheduleCarryBird(30000);
+}
 function showCarryGift(){
  hideCarryBird();
  const {amount,months}=carryBalance();
  const layer=document.createElement('div');layer.id='carryReveal';layer.setAttribute('role','presentation');
  layer.innerHTML='<div class="carryGift" role="dialog" aria-modal="true" aria-labelledby="carryTitle"><div class="carryBirdGlyph" aria-hidden="true">✉</div><div class="carryEyebrow">A LITTLE SURPRISE FROM PUTATU</div><h2 id="carryTitle">今回のお届けもの</h2><div class="carryAmount">'+(amount<0?'−':'')+yen(Math.abs(amount))+'</div><p class="carryDesc">確定済みの過去 '+months+'か月分の自由費キャリーオーバー'+(months===0?'<br>過去月の使用額を保存すると集計されます。':'')+'<br>今月分は月が終わってから反映されます。</p><button type="button" class="carryClose" id="carryClose">閉じる</button></div>';
  document.body.appendChild(layer);
- const close=()=>{layer.remove();document.removeEventListener('keydown',escapeCarry);};
+ const close=()=>{layer.remove();document.removeEventListener('keydown',escapeCarry);if(!birdTimeout)scheduleCarryBird(30000);};
  const escapeCarry=e=>{if(e.key==='Escape')close();};
  layer.addEventListener('click',e=>{if(e.target===layer||e.target.closest('#carryClose'))close();});
  document.addEventListener('keydown',escapeCarry);
@@ -745,8 +777,7 @@ function animateCarryBird(time){
  birdFrame=requestAnimationFrame(animateCarryBird);
 }
 function showCarryBird(){
- if(birdShown||document.hidden||$('carryReveal'))return;
- birdShown=true;
+ if(document.hidden||$('carryReveal')||birdMotion)return;
  const bird=document.createElement('button');bird.type='button';bird.id='carryBird';bird.setAttribute('aria-label','小さな鳥を捕まえる');bird.innerHTML=BIRD_SVG;
  document.body.appendChild(bird);
  bird.addEventListener('click',e=>{e.stopPropagation();showCarryGift();});
@@ -755,12 +786,26 @@ function showCarryBird(){
  birdMotion={x:Math.max(4,Math.random()*Math.max(4,innerWidth-52)),y:Math.max(4,Math.random()*Math.max(4,innerHeight-52)),vx:Math.cos(angle)*speed*(Math.random()<.5?-1:1),vy:Math.sin(angle)*speed,last:0,started:performance.now()};
  birdFrame=requestAnimationFrame(animateCarryBird);
 }
+function scheduleCarryBird(delay){
+ if(birdTimeout){clearTimeout(birdTimeout);birdTimeout=null;}
+ if(document.hidden)return;
+ const elapsed=Date.now()-birdLastEnd;
+ const wait=Math.max(delay||0,birdLastEnd?30000-elapsed:0);
+ birdTimeout=setTimeout(()=>{
+  birdTimeout=null;
+  if(document.hidden||birdMotion||$('carryReveal')){scheduleCarryBird(30000);return;}
+  if(birdPreview||Math.random()<.30)showCarryBird();
+  else scheduleCarryBird(30000);
+ },wait);
+}
 function initCarryBird(){
- // Rare encounter, once per app launch; ?bird=preview forces the test encounter.
- const preview=new URLSearchParams(location.search).get('bird')==='preview';
- if(!preview&&Math.random()>=.30)return;
- birdTimeout=setTimeout(showCarryBird,preview?1200:8000+Math.floor(Math.random()*17000));
- document.addEventListener('visibilitychange',()=>{if(document.hidden){hideCarryBird();if(birdTimeout){clearTimeout(birdTimeout);birdTimeout=null;}}});
+ birdPreview=new URLSearchParams(location.search).get('bird')==='preview';
+ // First encounter is a 30% chance; further chances occur every 30s after each check.
+ scheduleCarryBird(birdPreview?1200:8000+Math.floor(Math.random()*17000));
+ document.addEventListener('visibilitychange',()=>{
+  if(document.hidden){if(birdTimeout){clearTimeout(birdTimeout);birdTimeout=null;}if(birdMotion)hideCarryBird();}
+  else if(!birdMotion&&!$('carryReveal'))scheduleCarryBird(birdLastEnd?30000:8000+Math.floor(Math.random()*17000));
+ });
 }
 function init(){seedReminderExamples();initReminderUI();initCarryBird();initAppearance();initProject();document.addEventListener('click',click);document.addEventListener('submit',submit);document.addEventListener('change',change);document.addEventListener('input',e=>{if(e.target.dataset.plan)updatePlan(e.target);});initSpaceGesture();initBackSwipe();$('splitModal').addEventListener('click',e=>{if(e.target===$('splitModal'))closeSplit();});$('backHome').addEventListener('click',goBack);$('goHome').addEventListener('click',goHome);$('prevMonth').addEventListener('click',()=>moveMonth(-1));$('nextMonth').addEventListener('click',()=>moveMonth(1));document.querySelectorAll('.period').forEach(btn=>btn.addEventListener('click',()=>{period=Number(btn.dataset.period);document.querySelectorAll('.period').forEach(b=>{b.classList.toggle('active',b===btn);b.setAttribute('aria-pressed',b===btn);});drawBars($('myChart'),period,month().income);}));document.addEventListener('change',e=>{if(e.target.id==='income')incomeUpdate();if(e.target.name==='splitMode')updateSplitControls();});document.getElementById('splitPct').addEventListener('input',()=>{if(!splitEditing)return;const {total,id}=splitEditing;$('splitMine').value=id==='default'?0:Math.round(total*Number($('splitPct').value)/100);updateSplitControls();});document.getElementById('splitMine').addEventListener('input',()=>{if(!splitEditing)return;const v=Number($('splitMine').value)||0;$('splitPct').value=splitEditing.total?Math.round(v/splitEditing.total*100):0;updateSplitControls();});document.addEventListener('input',e=>{if(e.target.dataset.ratio!==undefined)adjustRatio(Number(e.target.dataset.ratio),Number(e.target.value));if(e.target.dataset.ratioNumber!==undefined)adjustRatio(Number(e.target.dataset.ratioNumber),Number(e.target.value));});$('exportData').addEventListener('click',()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='putatu-backup-'+monthKey(new Date())+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);toast('バックアップを書き出しました');});month();syncIncomeFields();showPage('me',false,true);save();}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
