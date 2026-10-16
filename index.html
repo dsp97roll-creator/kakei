@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#f7f7f8">
-<title>Putatu · v25</title>
+<title>Putatu · v26</title>
 <style>
 :root{--bg:#f7f7f8;--card:#fff;--text:#17181a;--muted:#777b82;--line:#e7e7ea;--blue:#2374ff;--green:#25b86f;--yellow:#f4c430;--orange:#ff8a32;--red:#ef5350;--purple:#7557c8}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif}
@@ -64,11 +64,10 @@ h2{font-size:16px;letter-spacing:-.03em}.card{border:1px solid #edf2fa;border-ra
 .reminderSettingsLink svg{width:17px;height:17px;margin-right:5px}
 @media(max-width:360px){.incomeHero .pieRow{grid-template-columns:minmax(112px,.85fr) minmax(0,1fr);gap:9px}.incomeHero .heroLegend .legendItem{padding:9px 0 9px 6px}.incomeHero .heroLegend .legendAmount{font-size:16px}.incomeHero .pieCenter strong{font-size:17px}}
 
-/* v25: transparent monoline bird, flapping wing and quick DVD-style bounces. */
+/* v26: slim monoline bird with SVG-attribute wing flapping (Safari-safe). */
 #carryBird{position:fixed;z-index:2147483000;top:0;left:0;width:48px;height:48px;padding:0;border:0;background:transparent;color:#6299d0;display:grid;place-items:center;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transform:translate3d(-80px,-80px,0);will-change:transform;pointer-events:auto;filter:drop-shadow(0 1px 1px #d8eaf8)}
-#carryBird svg{width:32px;height:32px;overflow:visible;stroke:currentColor;stroke-width:2.5;fill:none;stroke-linejoin:round;stroke-linecap:round}
-#carryBird .birdWing{transform-box:view-box;transform-origin:21px 23px;animation:carryWing .28s ease-in-out infinite alternate}
-@keyframes carryWing{from{transform:rotate(-24deg)}to{transform:rotate(27deg)}}
+#carryBird svg{width:30px;height:30px;overflow:visible;stroke:currentColor;stroke-width:2.35;fill:none;stroke-linejoin:round;stroke-linecap:round}
+#carryBird .birdWing{transform:none;animation:none} /* wing transform is animated via SVG transform attribute in JS for iOS Safari */
 #carryBird:focus-visible{outline:2px solid #247ee0;border-radius:50%}
 #carryReveal{position:fixed;inset:0;z-index:2147483001;background:#122c4e70;display:grid;place-items:center;padding:22px;box-sizing:border-box}
 #carryReveal .carryGift{background:#fff;color:#22344b;border-radius:26px;padding:30px 24px 24px;width:min(100%,360px);box-shadow:0 16px 50px #152b4d3a;text-align:center;animation:carryPop .3s ease-out}
@@ -705,7 +704,7 @@ function carryBalance(){
 }
 // The small bird keeps the reference's round head, tiny beak and simple outline.
 // No fill: cards and text remain visible through the body and wings.
-const BIRD_SVG='<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M9 30c3-3 7-5 11-5 3-6 8-11 15-10 4 1 6 4 6 7l5 2-5 2c-2 8-9 12-18 11-5-1-9-4-14-7Z"/><path class="birdWing" d="M23 27C16 24 13 16 14 8c4 5 8 6 12 8 5 3 6 8 4 12"/><path d="m22 37-2 5m7-5 1 5"/><circle cx="37" cy="21" r="1" fill="currentColor" stroke="none"/></svg>';
+const BIRD_SVG='<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M9 30Q15 26 21 26Q27 17 35 18Q40 18 41 23L45 25L41 27Q39 34 31 35Q20 38 9 30Z"/><path class="birdWing" d="M22 27Q15 23 15 13Q19 18 25 19Q30 21 29 27"/><path d="M20 36L18 40M26 36L25 40"/><circle cx="37" cy="23" r="1" fill="currentColor" stroke="none"/></svg>';
 let birdShown=false,birdTimeout=null,birdFrame=0,birdMotion=null;
 function hideCarryBird(){if(birdFrame){cancelAnimationFrame(birdFrame);birdFrame=0;}birdMotion=null;const bird=$('carryBird');if(bird)bird.remove();}
 function showCarryGift(){
@@ -731,6 +730,14 @@ function animateCarryBird(time){
  if(m.x>maxX){m.x=maxX-(m.x-maxX);m.vx=-Math.abs(m.vx)}
  if(m.y<pad){m.y=pad+(pad-m.y);m.vy=Math.abs(m.vy)}
  if(m.y>maxY){m.y=maxY-(m.y-maxY);m.vy=-Math.abs(m.vy)}
+ // Flap the SVG wing directly: transform attribute is reliable in iOS Safari.
+ // A 0.25s full cycle with wide, eased strokes; no dependence on CSS SVG transform-origin.
+ const wing=el.querySelector('.birdWing');
+ if(wing){
+  const cycle=(time-m.started)/250*2*Math.PI;
+  const degrees=32*Math.cos(cycle)-5;
+  wing.setAttribute('transform','rotate('+degrees.toFixed(2)+' 24 27)');
+ }
  // Flip direction immediately; no visual difference based on the saved amount.
  const flip=m.vx<0?-1:1;
  el.style.transform='translate3d('+m.x.toFixed(1)+'px,'+m.y.toFixed(1)+'px,0) scaleX('+flip+')';
@@ -744,7 +751,7 @@ function showCarryBird(){
  document.body.appendChild(bird);
  bird.addEventListener('click',e=>{e.stopPropagation();showCarryGift();});
  const angle=(Math.random()*.7+.2)*(Math.random()<.5?-1:1);
- const speed=210; // px/s, a little brisker than the previous flight.
+ const speed=199.5; // px/s: 5% slower than v25 (210).
  birdMotion={x:Math.max(4,Math.random()*Math.max(4,innerWidth-52)),y:Math.max(4,Math.random()*Math.max(4,innerHeight-52)),vx:Math.cos(angle)*speed*(Math.random()<.5?-1:1),vy:Math.sin(angle)*speed,last:0,started:performance.now()};
  birdFrame=requestAnimationFrame(animateCarryBird);
 }
