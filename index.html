@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#f7f7f8">
-<title>Putatu · v27</title>
+<title>Putatu · v28</title>
 <style>
 :root{--bg:#f7f7f8;--card:#fff;--text:#17181a;--muted:#777b82;--line:#e7e7ea;--blue:#2374ff;--green:#25b86f;--yellow:#f4c430;--orange:#ff8a32;--red:#ef5350;--purple:#7557c8}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif}
@@ -92,6 +92,7 @@ h2{font-size:16px;letter-spacing:-.03em}.card{border:1px solid #edf2fa;border-ra
 .remainingNumbers span{font-size:11px;color:var(--muted)}
 .remainingNumbers .remainingNegative{color:#ca6370}
 .remainingNote{font-size:9px;color:var(--muted);line-height:1.55;margin:7px 0 0;opacity:.85}
+
 </style>
 
 <style>
@@ -189,7 +190,42 @@ body[data-style="clear"] .sharedHeader{background:linear-gradient(145deg,#ffffff
 @media(prefers-reduced-motion:reduce){.chart .singleBar{transition:none!important;animation:none!important}}
 </style><style>
 .cleanList{padding:4px 14px!important}.cleanItem{display:flex;align-items:center;gap:5px;min-height:78px;border-bottom:1px solid var(--line)}.cleanItem:last-child{border-bottom:0}.cleanOpen{min-width:0;flex:1;display:flex;align-items:center;gap:10px;text-align:left;background:none;border:0;color:var(--text);padding:12px 0;cursor:pointer}.cleanGlyph{width:42px;height:42px;flex-shrink:0;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:23px;color:#258cf2;background:#e4f1ff}.clean-save{color:#b35adb;background:#f4e8ff}.clean-loan{color:#e49a42;background:#fff0dc}.cleanName{display:flex;flex:1;min-width:0;flex-direction:column;gap:5px}.cleanName strong{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cleanName small{color:var(--muted);font-size:11px;line-height:1.5}.cleanMoney{font-size:12px;white-space:nowrap}.cleanItem .scope{flex-shrink:0;width:38px;height:38px;min-width:38px;border-radius:14px}.cleanItem .chevron{color:var(--muted)}.cleanProgress{padding:0 10px 12px 52px}.cleanProgress .progress{margin:0}.cleanAdd{width:100%;margin:16px 0 20px}.cleanBottom .itemActions{justify-content:flex-end}.cleanBottom{margin-top:12px}
-</style></head>
+</style><style>
+/* v28 · Six color palettes. CLEAR is always softly tinted to the active palette. */
+.themeColors{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px 5px;justify-items:center}
+.themeColors button{width:72px;height:74px;border-radius:18px;padding:6px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px;position:relative}
+.themeColors button span{width:42px;height:42px;flex:none;box-shadow:0 2px 8px #17385b1c}
+.themeColors button::after{content:attr(title);display:block;font-size:9px;white-space:nowrap;color:var(--muted);line-height:1.25}
+.themeColors button.selected{border-color:var(--blue);background:color-mix(in srgb,var(--blue) 7%,white)}
+.themeAccessibilityNote{font-size:11px;line-height:1.65;color:var(--muted);margin:13px 0 0}
+body[data-color="blue"]{--themeTop:#eaf3fc;--themeMiddle:#f5f9ff;--themeBottom:#f4f8fd;--themeEdge:#edf3fb;--themeTint:#edf7ff}
+body[data-color="red"]{--themeTop:#ffe8ed;--themeMiddle:#fff5f6;--themeBottom:#fff8f9;--themeEdge:#f7e5e9;--themeTint:#fff0f2;--line:#f1e4e8}
+body[data-color="green"]{--themeTop:#e5f5ee;--themeMiddle:#f4faf6;--themeBottom:#f7fbf8;--themeEdge:#e1f0e8;--themeTint:#eaf8f0;--line:#e5f0e9}
+body[data-color="cv-red"]{--blue:#bc6427;--green:#1989b6;--yellow:#c9a44e;--themeTop:#fff1dd;--themeMiddle:#fff9ef;--themeBottom:#fffaf3;--themeEdge:#f5e9d5;--themeTint:#fff4df;--line:#f0e8d8}
+body[data-color="cv-green"]{--blue:#80742a;--green:#3287a3;--yellow:#e0ac36;--themeTop:#f2f2e5;--themeMiddle:#fafaf3;--themeBottom:#fafbf6;--themeEdge:#eaece1;--themeTint:#f5f4e7;--line:#ebede3}
+body[data-color="cv-blue"]{--blue:#7152c3;--green:#d69d2c;--yellow:#8c9bdd;--themeTop:#eee9ff;--themeMiddle:#f7f4ff;--themeBottom:#faf8ff;--themeEdge:#eee7fc;--themeTint:#f3eeff;--line:#ece7f5}
+body[data-style="clear"]{background:linear-gradient(180deg,var(--themeTop) 0%,var(--themeMiddle) 48%,var(--themeBottom) 100%)}
+body[data-style="clear"] .card,body[data-style="clear"] .homeCardButton{border-color:var(--themeEdge);background:linear-gradient(155deg,#fff,color-mix(in srgb,var(--themeMiddle) 32%,white))}
+body[data-style="clear"] .sharedHeader{background:linear-gradient(145deg,#fff,var(--themeTint))}
+body[data-style="clear"] .detailNav{background:var(--themeMiddle)}
+body[data-color="cv-red"] header h1,body[data-color="cv-green"] header h1,body[data-color="cv-blue"] header h1{color:var(--blue)}
+body[data-color="cv-red"] .action,body[data-color="cv-green"] .action,body[data-color="cv-blue"] .action{background:var(--blue)}
+body[data-color="cv-red"] .chart .singleBar,body[data-color="cv-green"] .chart .singleBar,body[data-color="cv-blue"] .chart .singleBar{background:linear-gradient(180deg,var(--blue),color-mix(in srgb,var(--blue) 54%,white))!important}
+body[data-color="cv-red"] .fixedDot,body[data-color="cv-green"] .fixedDot,body[data-color="cv-blue"] .fixedDot{background:var(--blue)}
+body[data-color="cv-red"] .freeDot,body[data-color="cv-green"] .freeDot,body[data-color="cv-blue"] .freeDot{background:var(--green)}
+body[data-color="cv-red"] .saveDot,body[data-color="cv-green"] .saveDot,body[data-color="cv-blue"] .saveDot{background:var(--yellow)}
+/* Keep category meaning readable without relying on hue alone. */
+body[data-color^="cv-"] .fixedDot{border-radius:3px}
+body[data-color^="cv-"] .freeDot{border-radius:50%}
+body[data-color^="cv-"] .saveDot{border-radius:1px;transform:rotate(45deg) scale(.83)}
+body[data-color^="cv-"] .pie{outline:1px solid color-mix(in srgb,var(--blue) 13%,transparent)}
+body[data-color^="cv-"] .period.active{color:var(--blue);border-color:var(--blue)}
+body[data-color^="cv-"] .tab.active{color:var(--blue)!important;background:var(--themeTint)!important}
+/* Keep legacy dark / special styles intact: palette background overrides only CLEAR. */
+#carryBird svg{width:29px;height:29px;stroke-width:2.15}
+
+</style>
+</head>
 <body><div class="app">
 <header><div><h1>Putatu</h1><div class="sub" id="themeSubtitle">PERSONAL FINANCE · CLEAR BLUE</div></div><div class="headerActions"><button type="button" id="notificationBell" class="notificationBell" aria-label="通知一覧を開く" title="通知"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg><span id="notificationDot" class="notificationDot hidden"></span></button><button type="button" id="customizeOpen" class="customizeOpen" aria-label="デザインをカスタマイズ" title="着せ替え">◈</button></div></header>
 <div id="storageNotice" class="notice hidden" role="status"></div>
@@ -207,7 +243,7 @@ body[data-style="clear"] .sharedHeader{background:linear-gradient(145deg,#ffffff
 <section id="detail" class="hidden" aria-labelledby="detailTitle"><div class="detailNav"><button type="button" id="backHome" aria-label="一つ前に戻る" title="戻る">‹</button><h2 id="detailTitle" tabindex="-1"></h2></div><button type="button" id="goHome" aria-label="自分のホームに戻る" title="ホーム" class="textButton" style="margin:8px 0 14px">⌂</button><div id="detailBody"></div></section><section id="shared" class="hidden"><div id="sharedLive"></div></section>
 <div id="projectModal" class="projectModal hidden" aria-hidden="true"><div class="projectSheet" role="dialog" aria-modal="true" aria-label="プロジェクト"><div class="projectTop"><button type="button" id="projectClose" class="iconOnly" aria-label="閉じる">‹</button><strong id="projectTitle">プロジェクト</strong><button type="button" id="projectSettings" class="iconOnly" aria-label="プロジェクトの見た目を編集" title="見た目を編集">✎</button></div><div id="projectCover" class="projectCover"></div><div class="projectAmountCard"><span class="sub">現在の貯蓄</span><strong id="projectBalance"></strong><span id="projectGoal" class="sub"></span><div id="projectProgress" class="projectProgress"><i></i></div></div><div id="projectEdit" class="projectEdit hidden"><h3>このプロジェクトのデザイン</h3><div class="projectPhotoPick"><label>アイコン写真<input id="projectIconInput" type="file" accept="image/*" hidden></label><label>ヘッダー写真<input id="projectHeaderInput" type="file" accept="image/*" hidden></label></div><div class="themeCaption">テーマ（未設定なら全体テーマを使用）</div><div class="projectThemeOptions" id="projectThemeOptions"><button data-project-color="inherit">全体に合わせる</button><button data-project-color="blue">BLUE</button><button data-project-color="red">RED</button><button data-project-color="green">GREEN</button></div><div class="projectPhotoPick"><button id="projectRemoveIcon" type="button">アイコンを外す</button><button id="projectRemoveHeader" type="button">ヘッダーを外す</button></div></div></div></div>
 <div id="cropModal" class="cropModal hidden" aria-hidden="true"><div class="cropSheet" role="dialog" aria-modal="true" aria-label="写真の範囲を選ぶ"><div class="cropTop"><button type="button" id="cropCancel">キャンセル</button><strong id="cropTitle">写真を調整</strong><button type="button" id="cropDone">決定</button></div><div id="cropViewport" class="cropViewport"><img id="cropImage" alt="選択した写真"><div class="cropFrame"></div></div><p class="cropHint">写真をドラッグして移動・2本指で拡大縮小</p><input type="range" id="cropZoom" min="1" max="3" step="0.01" value="1" aria-label="写真を拡大縮小"></div></div>
-<div id="splitModal" class="splitModal hidden" aria-hidden="true"><div class="splitSheet" role="dialog" aria-modal="true" aria-labelledby="splitName"><div class="sheetTop"><button type="button" class="iconOnly" data-action="closeSplit" aria-label="閉じる">×</button><strong id="splitName">分担</strong><button type="button" class="iconOnly blue" data-action="saveSplit" aria-label="保存">✓</button></div><div id="splitTotal" class="splitSheetTotal"></div><div class="splitBar large"><span id="splitEditBar" style="width:50%"></span></div><div class="splitEditPeople"><span>♙ 自分</span><span>♙ 相手</span></div><div class="splitModes" id="splitMode"><label><input type="radio" id="splitPercentMode" name="splitMode" checked> %</label><label><input type="radio" id="splitAmountMode" name="splitMode"> ¥</label></div><div class="splitPercentRow"><input type="range" id="splitPct" min="0" max="100" step="1" value="50" aria-label="自分の負担割合"><strong id="splitPctValue">50%</strong></div><div class="splitAmountRow" id="splitAmountRow"><div class="splitEditField"><label for="splitMine">自分の負担額</label><input type="number" id="splitMine" inputmode="numeric" min="0" step="1"></div><div class="splitEditField"><label>相手</label><strong id="splitOther">¥0</strong></div></div><p class="formError" id="splitError"></p><button type="button" id="splitReset" class="textButton resetSplit" data-action="resetSplit">基本の分担に戻す</button></div></div><div id="spaceOverlay" class="spaceOverlay hidden" aria-hidden="true"><div class="spaceTrack"><div class="spacePreview" data-space="me"><span class="previewIcon">♙</span><strong>自分</strong><small>MY FINANCE</small></div><div class="spacePreview" data-space="shared"><span class="previewIcon">♧</span><strong>共有</strong><small>OUR FINANCE</small></div></div><div class="spaceDots"><i></i><i></i></div></div><div id="themeModal" class="themeModal hidden" aria-hidden="true"><div class="themeSheet" role="dialog" aria-modal="true" aria-labelledby="themeTitle"><div class="themeTop"><button type="button" id="customizeClose" class="iconOnly" aria-label="閉じる">×</button><h2 id="themeTitle">着せ替え</h2><span style="width:44px"></span></div><div class="themeSection"><div class="themeCaption">カラー</div><div class="themeColors" id="themeColors"><button data-color="blue" aria-label="ブルー" title="ブルー"><span style="background:#287fe9"></span></button><button data-color="red" aria-label="レッド" title="レッド"><span style="background:#e75869"></span></button><button data-color="green" aria-label="グリーン" title="グリーン"><span style="background:#299b78"></span></button></div></div><div class="themeSection"><div class="themeCaption">スタイル</div><div class="themeStyles" id="themeStyles"><button data-style="clear">CLEAR</button><button data-style="minimal">MINIMAL</button><button data-style="classic">CLASSIC</button><button data-style="retro">RETRO TECH</button><button data-style="bio">BIO TECH</button><button data-style="pop">POP</button><button data-style="black">ALL BLACK</button></div></div></div></div></div>
+<div id="splitModal" class="splitModal hidden" aria-hidden="true"><div class="splitSheet" role="dialog" aria-modal="true" aria-labelledby="splitName"><div class="sheetTop"><button type="button" class="iconOnly" data-action="closeSplit" aria-label="閉じる">×</button><strong id="splitName">分担</strong><button type="button" class="iconOnly blue" data-action="saveSplit" aria-label="保存">✓</button></div><div id="splitTotal" class="splitSheetTotal"></div><div class="splitBar large"><span id="splitEditBar" style="width:50%"></span></div><div class="splitEditPeople"><span>♙ 自分</span><span>♙ 相手</span></div><div class="splitModes" id="splitMode"><label><input type="radio" id="splitPercentMode" name="splitMode" checked> %</label><label><input type="radio" id="splitAmountMode" name="splitMode"> ¥</label></div><div class="splitPercentRow"><input type="range" id="splitPct" min="0" max="100" step="1" value="50" aria-label="自分の負担割合"><strong id="splitPctValue">50%</strong></div><div class="splitAmountRow" id="splitAmountRow"><div class="splitEditField"><label for="splitMine">自分の負担額</label><input type="number" id="splitMine" inputmode="numeric" min="0" step="1"></div><div class="splitEditField"><label>相手</label><strong id="splitOther">¥0</strong></div></div><p class="formError" id="splitError"></p><button type="button" id="splitReset" class="textButton resetSplit" data-action="resetSplit">基本の分担に戻す</button></div></div><div id="spaceOverlay" class="spaceOverlay hidden" aria-hidden="true"><div class="spaceTrack"><div class="spacePreview" data-space="me"><span class="previewIcon">♙</span><strong>自分</strong><small>MY FINANCE</small></div><div class="spacePreview" data-space="shared"><span class="previewIcon">♧</span><strong>共有</strong><small>OUR FINANCE</small></div></div><div class="spaceDots"><i></i><i></i></div></div><div id="themeModal" class="themeModal hidden" aria-hidden="true"><div class="themeSheet" role="dialog" aria-modal="true" aria-labelledby="themeTitle"><div class="themeTop"><button type="button" id="customizeClose" class="iconOnly" aria-label="閉じる">×</button><h2 id="themeTitle">着せ替え</h2><span style="width:44px"></span></div><div class="themeSection"><div class="themeCaption">カラー · 背景も一緒に切り替わります</div><div class="themeColors" id="themeColors"><button data-color="blue" aria-label="ブルー" title="ブルー"><span style="background:#287fe9"></span></button><button data-color="red" aria-label="レッド" title="レッド"><span style="background:#e75869"></span></button><button data-color="green" aria-label="グリーン" title="グリーン"><span style="background:#299b78"></span></button><button data-color="cv-red" aria-label="赤系の色を区別しにくい方向けの配色" title="赤系の識別に配慮"><span style="background:linear-gradient(135deg,#df762d 0 48%,#1588bd 48%)"></span></button><button data-color="cv-green" aria-label="緑系の色を区別しにくい方向けの配色" title="緑系の識別に配慮"><span style="background:linear-gradient(135deg,#91812c 0 48%,#327eab 48%)"></span></button><button data-color="cv-blue" aria-label="青系の色を区別しにくい方向けの配色" title="青系の識別に配慮"><span style="background:linear-gradient(135deg,#7456c9 0 48%,#e9ad36 48%)"></span></button></div><p class="themeAccessibilityNote">色覚に配慮した3種類は試作配色です。識別には色だけでなく名称・金額・割合も併用します。個人差があるため、全ての色覚特性での見やすさを保証するものではありません。</p></div><div class="themeSection"><div class="themeCaption">スタイル</div><div class="themeStyles" id="themeStyles"><button data-style="clear">CLEAR</button><button data-style="minimal">MINIMAL</button><button data-style="classic">CLASSIC</button><button data-style="retro">RETRO TECH</button><button data-style="bio">BIO TECH</button><button data-style="pop">POP</button><button data-style="black">ALL BLACK</button></div></div></div></div></div>
 <footer>データはこのブラウザに保存されます。2台の端末間の同期・銀行やカードとの連携は未接続です。<br><button type="button" id="exportData" class="textButton">データをバックアップ</button></footer><div id="toast" class="toast hidden" role="status"></div></div>
 <script>
 /* Putatu v6 data contract
@@ -608,7 +644,11 @@ const APPEAR_KEY='putatu.v12.appearance';
 let appearance={color:'blue',style:'clear',header:null,icon:null};
 try{const saved=JSON.parse(localStorage.getItem(APPEAR_KEY)||'null');if(saved&&typeof saved==='object')appearance={...appearance,...saved,header:null,icon:null};}catch(e){}
 function applyAppearance(){
+ if(!['blue','red','green','cv-red','cv-green','cv-blue'].includes(appearance.color))appearance.color='blue';
  document.body.dataset.color=appearance.color;document.body.dataset.style=appearance.style;
+ const themeMeta=document.querySelector('meta[name="theme-color"]');
+ const metaColors={blue:'#eaf3fc',red:'#ffe8ed',green:'#e5f5ee','cv-red':'#fff1dd','cv-green':'#f2f2e5','cv-blue':'#eee9ff'};
+ if(themeMeta)themeMeta.content=appearance.style==='clear'?(metaColors[appearance.color]||metaColors.blue):'#f7f7f8';
  
  const sub=$('themeSubtitle');sub.textContent='PERSONAL FINANCE · '+appearance.style.toUpperCase();
   document.querySelectorAll('[data-color]').forEach(b=>b.classList.toggle('selected',b.dataset.color===appearance.color));
@@ -731,21 +771,23 @@ function carryBalance(){
 }
 // The small bird keeps the reference's round head, tiny beak and simple outline.
 // No fill: cards and text remain visible through the body and wings.
-const BIRD_SVG='<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M9 30Q15 26 21 26Q27 17 35 18Q40 18 41 23L45 25L41 27Q39 34 31 35Q20 38 9 30Z"/><path class="birdWing" d="M22 27Q15 23 15 13Q19 18 25 19Q30 21 29 27"/><path d="M20 36L18 40M26 36L25 40"/><circle cx="37" cy="23" r="1" fill="currentColor" stroke="none"/></svg>';
-let birdTimeout=null,birdFrame=0,birdMotion=null,birdLastEnd=0,birdPreview=false;
+const BIRD_SVG='<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M7 30 Q14 29 18 25 Q23 22 28 19 Q33 14 38 18 Q40 20 40 22 L45 24 L40 27 Q38 34 30 36 Q19 40 9 35 Q14 33 17 30"/><path class="birdWing" d="M25 28 Q18 23 16 12 Q21 16 25 19 Q29 21 31 26"/><path d="M17 36 L14 40 M24 37 L22 41"/><circle cx="36.6" cy="21.3" r="1.25" fill="currentColor" stroke="none"/></svg>';
+let birdTimeout=null,birdFrame=0,birdMotion=null,birdLastEnd=0,birdPreview=false,birdCaughtThisLaunch=false;
 function hideCarryBird(){
  if(birdFrame){cancelAnimationFrame(birdFrame);birdFrame=0;}
  birdMotion=null;const bird=$('carryBird');if(bird)bird.remove();
  birdLastEnd=Date.now();
- scheduleCarryBird(30000);
+ if(!birdCaughtThisLaunch)scheduleCarryBird(30000);
 }
 function showCarryGift(){
+ birdCaughtThisLaunch=true;
+ if(birdTimeout){clearTimeout(birdTimeout);birdTimeout=null;}
  hideCarryBird();
  const {amount,months}=carryBalance();
  const layer=document.createElement('div');layer.id='carryReveal';layer.setAttribute('role','presentation');
  layer.innerHTML='<div class="carryGift" role="dialog" aria-modal="true" aria-labelledby="carryTitle"><div class="carryBirdGlyph" aria-hidden="true">✉</div><div class="carryEyebrow">A LITTLE SURPRISE FROM PUTATU</div><h2 id="carryTitle">今回のお届けもの</h2><div class="carryAmount">'+(amount<0?'−':'')+yen(Math.abs(amount))+'</div><p class="carryDesc">確定済みの過去 '+months+'か月分の自由費キャリーオーバー'+(months===0?'<br>過去月の使用額を保存すると集計されます。':'')+'<br>今月分は月が終わってから反映されます。</p><button type="button" class="carryClose" id="carryClose">閉じる</button></div>';
  document.body.appendChild(layer);
- const close=()=>{layer.remove();document.removeEventListener('keydown',escapeCarry);if(!birdTimeout)scheduleCarryBird(30000);};
+ const close=()=>{layer.remove();document.removeEventListener('keydown',escapeCarry);if(!birdCaughtThisLaunch&&!birdTimeout)scheduleCarryBird(30000);};
  const escapeCarry=e=>{if(e.key==='Escape')close();};
  layer.addEventListener('click',e=>{if(e.target===layer||e.target.closest('#carryClose'))close();});
  document.addEventListener('keydown',escapeCarry);
@@ -777,7 +819,7 @@ function animateCarryBird(time){
  birdFrame=requestAnimationFrame(animateCarryBird);
 }
 function showCarryBird(){
- if(document.hidden||$('carryReveal')||birdMotion)return;
+ if(birdCaughtThisLaunch||document.hidden||$('carryReveal')||birdMotion)return;
  const bird=document.createElement('button');bird.type='button';bird.id='carryBird';bird.setAttribute('aria-label','小さな鳥を捕まえる');bird.innerHTML=BIRD_SVG;
  document.body.appendChild(bird);
  bird.addEventListener('click',e=>{e.stopPropagation();showCarryGift();});
@@ -787,6 +829,7 @@ function showCarryBird(){
  birdFrame=requestAnimationFrame(animateCarryBird);
 }
 function scheduleCarryBird(delay){
+ if(birdCaughtThisLaunch)return;
  if(birdTimeout){clearTimeout(birdTimeout);birdTimeout=null;}
  if(document.hidden)return;
  const elapsed=Date.now()-birdLastEnd;
@@ -804,7 +847,7 @@ function initCarryBird(){
  scheduleCarryBird(birdPreview?1200:8000+Math.floor(Math.random()*17000));
  document.addEventListener('visibilitychange',()=>{
   if(document.hidden){if(birdTimeout){clearTimeout(birdTimeout);birdTimeout=null;}if(birdMotion)hideCarryBird();}
-  else if(!birdMotion&&!$('carryReveal'))scheduleCarryBird(birdLastEnd?30000:8000+Math.floor(Math.random()*17000));
+  else if(!birdCaughtThisLaunch&&!birdMotion&&!$('carryReveal'))scheduleCarryBird(birdLastEnd?30000:8000+Math.floor(Math.random()*17000));
  });
 }
 function init(){seedReminderExamples();initReminderUI();initCarryBird();initAppearance();initProject();document.addEventListener('click',click);document.addEventListener('submit',submit);document.addEventListener('change',change);document.addEventListener('input',e=>{if(e.target.dataset.plan)updatePlan(e.target);});initSpaceGesture();initBackSwipe();$('splitModal').addEventListener('click',e=>{if(e.target===$('splitModal'))closeSplit();});$('backHome').addEventListener('click',goBack);$('goHome').addEventListener('click',goHome);$('prevMonth').addEventListener('click',()=>moveMonth(-1));$('nextMonth').addEventListener('click',()=>moveMonth(1));document.querySelectorAll('.period').forEach(btn=>btn.addEventListener('click',()=>{period=Number(btn.dataset.period);document.querySelectorAll('.period').forEach(b=>{b.classList.toggle('active',b===btn);b.setAttribute('aria-pressed',b===btn);});drawBars($('myChart'),period,month().income);}));document.addEventListener('change',e=>{if(e.target.id==='income')incomeUpdate();if(e.target.name==='splitMode')updateSplitControls();});document.getElementById('splitPct').addEventListener('input',()=>{if(!splitEditing)return;const {total,id}=splitEditing;$('splitMine').value=id==='default'?0:Math.round(total*Number($('splitPct').value)/100);updateSplitControls();});document.getElementById('splitMine').addEventListener('input',()=>{if(!splitEditing)return;const v=Number($('splitMine').value)||0;$('splitPct').value=splitEditing.total?Math.round(v/splitEditing.total*100):0;updateSplitControls();});document.addEventListener('input',e=>{if(e.target.dataset.ratio!==undefined)adjustRatio(Number(e.target.dataset.ratio),Number(e.target.value));if(e.target.dataset.ratioNumber!==undefined)adjustRatio(Number(e.target.dataset.ratioNumber),Number(e.target.value));});$('exportData').addEventListener('click',()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='putatu-backup-'+monthKey(new Date())+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);toast('バックアップを書き出しました');});month();syncIncomeFields();showPage('me',false,true);save();}
