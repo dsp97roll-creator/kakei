@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#f7f7f8">
-<title>Putatu · v21</title>
+<title>Putatu · v22</title>
 <style>
 :root{--bg:#f7f7f8;--card:#fff;--text:#17181a;--muted:#777b82;--line:#e7e7ea;--blue:#2374ff;--green:#25b86f;--yellow:#f4c430;--orange:#ff8a32;--red:#ef5350;--purple:#7557c8}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif}
@@ -46,6 +46,8 @@ h2{font-size:16px;letter-spacing:-.03em}.card{border:1px solid #edf2fa;border-ra
 .putatuReminderSheet form{display:grid;gap:12px}.putatuReminderSheet label{display:grid;gap:6px;font-size:12px;font-weight:700}
 .putatuReminderSheet input,.putatuReminderSheet select{width:100%;box-sizing:border-box;padding:12px;border:1px solid #9bb1c755;border-radius:11px;background:var(--card,#fff);color:var(--ink);font-size:16px}
 .putatuReminderHint{font-size:11px;color:var(--muted);line-height:1.6}.putatuReminderDelete{background:transparent;color:#c65c62;border:0;padding:12px}
+
+.headerActions{display:flex;align-items:center;gap:8px}.notificationBell{width:38px;height:38px;border:0;border-radius:14px;background:transparent;color:var(--ink);font-size:24px;position:relative;display:grid;place-items:center}.notificationBell::first-letter{font-weight:600}.notificationDot{position:absolute;top:6px;right:6px;width:8px;height:8px;background:#ed735e;border:2px solid var(--card,#fff);border-radius:50%}.notificationDot.hidden{display:none}.reminderTools{display:flex;align-items:center;gap:8px}.reminderTools button{width:38px;height:38px;border:0;background:transparent;color:var(--ink);font-size:24px}.reminderPanelSub{font-size:12px;color:var(--muted);margin-bottom:12px}.reminderSettingsLink{display:block;width:100%;border:0;background:transparent;text-align:center;color:var(--blue);font-size:12px;font-weight:700;padding:14px 8px;margin:8px 0}.reminderReadout{display:grid;grid-template-columns:1fr auto;gap:16px 10px;padding:15px 0}.reminderReadout span{color:var(--muted);font-size:13px}.reminderReadout strong{font-size:14px}
 </style>
 
 <style>
@@ -145,7 +147,7 @@ body[data-style="clear"] .sharedHeader{background:linear-gradient(145deg,#ffffff
 .cleanList{padding:4px 14px!important}.cleanItem{display:flex;align-items:center;gap:5px;min-height:78px;border-bottom:1px solid var(--line)}.cleanItem:last-child{border-bottom:0}.cleanOpen{min-width:0;flex:1;display:flex;align-items:center;gap:10px;text-align:left;background:none;border:0;color:var(--text);padding:12px 0;cursor:pointer}.cleanGlyph{width:42px;height:42px;flex-shrink:0;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:23px;color:#258cf2;background:#e4f1ff}.clean-save{color:#b35adb;background:#f4e8ff}.clean-loan{color:#e49a42;background:#fff0dc}.cleanName{display:flex;flex:1;min-width:0;flex-direction:column;gap:5px}.cleanName strong{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cleanName small{color:var(--muted);font-size:11px;line-height:1.5}.cleanMoney{font-size:12px;white-space:nowrap}.cleanItem .scope{flex-shrink:0;width:38px;height:38px;min-width:38px;border-radius:14px}.cleanItem .chevron{color:var(--muted)}.cleanProgress{padding:0 10px 12px 52px}.cleanProgress .progress{margin:0}.cleanAdd{width:100%;margin:16px 0 20px}.cleanBottom .itemActions{justify-content:flex-end}.cleanBottom{margin-top:12px}
 </style></head>
 <body><div class="app">
-<header><div><h1>Putatu</h1><div class="sub" id="themeSubtitle">PERSONAL FINANCE · CLEAR BLUE</div></div><button type="button" id="customizeOpen" class="customizeOpen" aria-label="デザインをカスタマイズ" title="着せ替え">◈</button></header>
+<header><div><h1>Putatu</h1><div class="sub" id="themeSubtitle">PERSONAL FINANCE · CLEAR BLUE</div></div><div class="headerActions"><button type="button" id="notificationBell" class="notificationBell" aria-label="通知一覧を開く" title="通知">♧<span id="notificationDot" class="notificationDot hidden"></span></button><button type="button" id="customizeOpen" class="customizeOpen" aria-label="デザインをカスタマイズ" title="着せ替え">◈</button></div></header>
 <div id="storageNotice" class="notice hidden" role="status"></div>
 <button type="button" id="spacePicker" class="spacePicker" aria-label="自分と共有のページを切り替える">♙ <span id="spaceName">自分</span> <span class="spaceHint">⌄</span></button>
 <div class="monthNav"><button type="button" id="prevMonth" aria-label="前の月">‹</button><strong id="monthTitle"></strong><button type="button" id="nextMonth" aria-label="次の月">›</button></div><section id="me">
@@ -206,11 +208,29 @@ function reminderCard(scope){
  const entries=remindersFor(scope);
  if(!entries.length)return '';
  return '<div class="card putatuReminder"><div class="putatuReminderHead"><span>◷ 今月の更新・支払い予定</span><span class="putatuReminderCount">'+entries.length+'件</span></div>'+
- entries.map(({item:x,occ})=>'<button class="putatuReminderRow" type="button" data-reminder-edit="'+esc(x.id)+'"><span><strong>'+esc(x.title)+'</strong><small>'+occ.day+'日 · '+(x.demo?'サンプル · ':'')+(x.repeat?'繰り返し':'単発')+'</small></span><b>'+yen(x.amount)+'</b><span>›</span></button>').join('')+
- '<button class="putatuReminderAdd" type="button" data-reminder-add="'+scope+'">＋ 予定を追加</button></div>';
+ entries.map(({item:x,occ})=>'<button class="putatuReminderRow" type="button" data-reminder-view="'+esc(x.id)+'"><span><strong>'+esc(x.title)+'</strong><small>'+occ.day+'日 · '+(x.demo?'サンプル · ':'')+(x.repeat?'繰り返し':'単発')+'</small></span><b>'+yen(x.amount)+'</b><span>›</span></button>').join('')+
+ '</div>';
 }
 function reminderManager(scope){
  return '<button type="button" class="putatuReminderManage" data-reminder-add="'+scope+'">＋ 更新日・引落日の予定を登録</button>';
+}
+function notificationPanel(scope,settings=false){
+ const list=reminders.filter(x=>x.scope===scope).sort((a,b)=>a.date.localeCompare(b.date));
+ const title=scope==='shared'?'共有の通知':'自分の通知';
+ return '<div class="putatuReminderOverlay" id="putatuReminderOverlay"><div class="putatuReminderSheet"><div class="putatuReminderSheetTop"><h2>'+title+'</h2><div class="reminderTools"><button type="button" data-reminder-settings aria-label="通知の設定" title="通知の設定">⚙</button><button type="button" data-reminder-close aria-label="閉じる">×</button></div></div>'+
+ '<div class="reminderPanelSub">'+(settings?'更新日・引落日の登録と管理':'登録済みの更新日・引落日')+'</div>'+
+ (list.length?list.map(x=>'<button type="button" class="putatuReminderRow" data-reminder-'+(settings?'edit':'view')+'="'+esc(x.id)+'"><span><strong>'+esc(x.title)+'</strong><small>'+esc(x.date)+' · '+(x.repeat===24?'2年ごと':x.repeat===12?'毎年':x.repeat===1?'毎月':'単発')+(x.demo?' · サンプル':'')+'</small></span><b>'+yen(x.amount)+'</b><span>›</span></button>').join(''):'<p class="putatuReminderHint">登録済みの予定はありません。</p>')+
+ (settings?'<button class="action" type="button" data-reminder-add="'+scope+'">＋ 更新日・引落日を登録</button>':'<button type="button" class="reminderSettingsLink" data-reminder-settings>⚙ 通知を設定・編集する</button>')+
+ '<p class="putatuReminderHint">通知は現在アプリ内表示のみ。iPhoneへの自動プッシュ通知には未対応です。</p></div></div>';
+}
+function showNotificationPanel(settings=false){
+ document.getElementById('putatuReminderOverlay')?.remove();
+ document.body.insertAdjacentHTML('beforeend',notificationPanel(currentSpace==='shared'?'shared':'personal',settings));
+}
+function updateNotificationBell(){
+ const scope=currentSpace==='shared'?'shared':'personal';
+ const dot=document.getElementById('notificationDot');
+ if(dot)dot.classList.toggle('hidden',remindersFor(scope).length===0);
 }
 function reminderEditor(existing,scope){
  const x=existing||{title:'',date:dateShift(1,15),amount:0,scope,repeat:12,notify:30};
@@ -304,6 +324,7 @@ function itemEditor(type,x){const f=type==='save'?field('name','貯蓄先の名�
 function renderItemDetail(){if(itemDetail?.type==='free')return '<div class="card"><h3>今月の自由費 使用額</h3><form data-form="free" id="freeForm">'+field('used','使用額（円）',month().freeUsed,{number:true,required:true})+'<p class="formError" id="formError"></p><button type="submit" class="action">保存</button></form></div>';const type=itemDetail?.type,x=type?collection(type).find(y=>y.id===itemDetail.id):null;if(!x)return'<p class="note">項目が見つかりません。</p>';if(edit)return itemEditor(type,x);
  const amount=type==='save'?balance(x):type==='loan'?x.balance:type==='fixed'?monthlyFixed(x):x.amount;
  let h='<div class="card hero"><span class="sub">'+(type==='save'?'現在の残高':type==='loan'?'ローン残高':'毎月の固定費換算額')+'</span><div class="big">'+yen(amount)+'</div><div class="row"><span class="sub">'+scopeLabel(x.scope)+'</span>'+scopeButton(x,type)+'</div></div>';
+ if(type==='fixed'&&x.cadence==='annual')h+='<button type="button" class="reminderSettingsLink" data-reminder-settings>⚙ 年契約の更新日を通知設定で管理</button>';
  if(type==='fixed'&&x.cadence==='annual')h+='<div class="card"><span class="sub">年契約の金額</span><div class="big">'+yen(x.amount)+'</div><p class="note">年額を12か月で割った月額 '+yen(monthlyFixed(x))+' を毎月の固定費予算に反映します。実際の請求月や支払済み状態とは別の予算換算です。</p></div>';
  if(type==='fixed'&&x.scope==='shared'){
   h+='<div class="card"><div class="row"><span class="sub">共有から反映 · 自分の負担</span><strong>'+yen(splitFor(x.id,monthlyFixed(x)))+'</strong></div><p class="note">共有全体（月額換算） '+yen(monthlyFixed(x))+' のうち、自分の負担分だけを固定費合計に計上します。</p><button type="button" class="secondary" data-action="openSplit" data-id="'+esc(x.id)+'" data-kind="fixed">共有の分担を調整</button></div>';
@@ -332,7 +353,7 @@ function renderShared(){
   html='<div class="sharedHeader sharedQuiet"><span class="eyebrow">OUR FINANCE</span><h2>ふたりの家計</h2><span class="sub">共有の家計をまとめて管理</span></div>'+
   '<div class="card sharedMonthly"><div class="sharedMonthlyTop"><span>今月の状況</span><strong>'+esc(selectedMonth.replace('-','年'))+'月</strong></div>'+
   '<div class="sharedMonthlyGrid"><div><small>自分の収入</small><strong>'+yen(income)+'</strong></div><div><small>共有の支出予定</small><strong>'+yen(expenses)+'</strong></div><div><small>自分の負担</small><strong>'+yen(sum(costs.map(x=>splitFor(x.id,x.amount)))+sum(accounts.map(a=>splitFor(a.id,month().savingsPlans[a.id]||0))))+'</strong></div></div></div>'+
-  reminderCard('shared')+reminderManager('shared')+'<div class="sharedTiles">'+
+  reminderCard('shared')+'<div class="sharedTiles">'+
   sharedTile('⌂','固定費',fixed,costs.length+'件の共有固定費','fixedTint','fixed')+
   sharedTile('✦','プロジェクト',saved,accounts.length+'件の共有プロジェクト','saveTint','projects')+
   sharedTile('▣','ローン',monthly,loans.length+'件 · 毎月の返済額','loanTint','loans')+
@@ -357,7 +378,7 @@ const free='<button type="button" class="homeCardButton '+(over?'dangerBg':'')+'
 const savings='<button type="button" class="homeCardButton" data-detail="save"><div class="row"><span class="homePictogram savePict" aria-hidden="true">♧</span><span class="cardArrow">›</span></div><div class="sub">累計貯蓄額</div><div class="big">'+yen(bal)+'</div><div class="sub">今月の振り分け '+yen(planTotal())+'</div></button>';
 const fixed='<button type="button" class="homeCardButton" data-detail="fixed"><div class="row"><span class="homePictogram fixedPict" aria-hidden="true">⌂</span><span class="cardArrow">›</span></div><div class="sub">固定費の管理</div><div class="big">'+yen(total)+'</div><div class="sub">本人負担 '+all+'件 · 予算 '+yen(b.fixed)+'</div></button>';
 const loan=state.loans.length?'<button type="button" class="homeCardButton loanHome" data-detail="loan"><div class="row"><h2><span class="homePictogram loanPict" aria-hidden="true">▣</span>ローン・返済状況</h2><span class="cardArrow">›</span></div><div class="big">'+yen(sum(state.loans.map(l=>personalFixedAmount({id:l.id,scope:l.scope,amount:l.monthly}))))+'</div><div class="sub">毎月の本人返済額 · 支払い確認 '+paid+' / '+state.loans.length+'件</div></button>':'';
-$('homeDetails').innerHTML=reminderCard('personal')+reminderManager('personal')+free+'<div class="homePair">'+savings+fixed+'</div>'+loan;}
+$('homeDetails').innerHTML=reminderCard('personal')+free+'<div class="homePair">'+savings+fixed+'</div>'+loan;}
 function renderRatio(){const m=month();return '<div class="card compactCard"><div class="row"><h2>収入</h2><span class="sub">'+selectedMonth.replace('-',' / ')+'</span></div><div class="modeTabs"><button type="button" class="modeBtn '+(prefs.incomeMode==='manual'?'selected':'')+'" data-action="incomeMode" data-mode="manual">手動</button><button type="button" class="modeBtn '+(prefs.incomeMode==='auto'?'selected':'')+'" data-action="incomeMode" data-mode="auto">自動連携</button></div>'+(prefs.incomeMode==='auto'?'<div class="autoNotice"><span class="autoIcon">⌁</span><div><strong>自動連携は準備中</strong><small>銀行接続はまだ利用できません。収入は引き続き手動で登録できます。</small></div></div>':'')+'<div class="fieldGrid"><div><label for="baseIncome">基本収入（円）</label><input id="baseIncome" type="number" min="0" max="'+LIMIT+'" inputmode="numeric" value="'+m.baseIncome+'"></div><div><label for="extraIncome">追加収入（円）</label><input id="extraIncome" type="number" min="0" max="'+LIMIT+'" inputmode="numeric" value="'+m.extraIncome+'"></div></div><div class="row incomeTotal"><span>合計</span><strong>'+yen(m.income)+'</strong></div><div class="formActions"><button type="button" class="action" data-action="saveIncome">収入を保存</button><button type="button" class="secondary" data-action="copyIncome">前月をコピー</button></div><p id="incomeError" class="formError" role="alert"></p></div><div class="card compactCard"><div class="row"><h2>分配</h2><span class="sub">自由に調整</span></div><div id="ratioControls"></div><p id="ratioError" class="formError" role="alert"></p></div>'}
 let itemDetail=null,itemAdding=null;
 let ratioDraft=null,ratioDraftMonth=null;
@@ -442,7 +463,7 @@ function drawBars(el,count,base,isShared=false){
  });
 }
 function syncIncomeFields(){if(page==='ratio'){const inp=$('income');if(inp)inp.value=month().income;ratioSliders();}}
-function render(){const m=month(),b=budget();$('monthTitle').textContent=selectedMonth.replace('-','年 ')+'月';['fixed','free','save'].forEach((k,i)=>{$(k+'Val').textContent=yen(b[k]);$(k+'Label').textContent=['固定費','自由費','貯蓄'][i]+' '+m.ratios[i]+'%';$(k+'Legend').textContent=m.ratios[i]+'%';});$('totalVal').textContent=yen(m.income);$('pieTotal').textContent='100%';$('heroIncome').textContent=yen(m.income);$('incomeBreakdown').textContent='基本 '+yen(m.baseIncome??m.income)+'  ·  追加 '+yen(m.extraIncome??0);$('pie').style.background='conic-gradient(var(--blue) 0deg '+m.ratios[0]*3.6+'deg,var(--green) '+m.ratios[0]*3.6+'deg '+(m.ratios[0]+m.ratios[1])*3.6+'deg,var(--yellow) '+(m.ratios[0]+m.ratios[1])*3.6+'deg 360deg)';$('pie').setAttribute('aria-label','収入 '+yen(m.income)+'。固定費 '+m.ratios[0]+'%、自由費 '+m.ratios[1]+'%、貯蓄 '+m.ratios[2]+'%');drawBars($('myChart'),period,m.income);if($('sharedChart'))drawBars($('sharedChart'),6,240000,true);renderHome();renderShared();if(!['me','shared'].includes(page))renderDetail();notice();}
+function render(){const m=month(),b=budget();$('monthTitle').textContent=selectedMonth.replace('-','年 ')+'月';['fixed','free','save'].forEach((k,i)=>{$(k+'Val').textContent=yen(b[k]);$(k+'Label').textContent=['固定費','自由費','貯蓄'][i]+' '+m.ratios[i]+'%';$(k+'Legend').textContent=m.ratios[i]+'%';});$('totalVal').textContent=yen(m.income);$('pieTotal').textContent='100%';$('heroIncome').textContent=yen(m.income);$('incomeBreakdown').textContent='基本 '+yen(m.baseIncome??m.income)+'  ·  追加 '+yen(m.extraIncome??0);$('pie').style.background='conic-gradient(var(--blue) 0deg '+m.ratios[0]*3.6+'deg,var(--green) '+m.ratios[0]*3.6+'deg '+(m.ratios[0]+m.ratios[1])*3.6+'deg,var(--yellow) '+(m.ratios[0]+m.ratios[1])*3.6+'deg 360deg)';$('pie').setAttribute('aria-label','収入 '+yen(m.income)+'。固定費 '+m.ratios[0]+'%、自由費 '+m.ratios[1]+'%、貯蓄 '+m.ratios[2]+'%');drawBars($('myChart'),period,m.income);if($('sharedChart'))drawBars($('sharedChart'),6,240000,true);renderHome();renderShared();updateNotificationBell();if(!['me','shared'].includes(page))renderDetail();notice();}
 function collection(type){return type==='fixed'?state.fixedCosts:type==='loan'?state.loans:state.savingsAccounts;}
 function submit(event){const f=event.target;if(!f.matches('form[data-form]'))return;event.preventDefault();const type=f.dataset.form,data=new FormData(f),error=$('formError');const fail=t=>{error.textContent=t;};
  if(type==='free'){const used=moneyValue(data.get('used'));if(used===null)return fail('使用額は0円以上の整数で入力してください。');month().freeUsed=used;itemDetail=null;itemAdding=null;refresh();toast('使用額を更新しました');return;}
@@ -502,7 +523,7 @@ function switchSpace(target){
    navHistory=[];
    showPage(target,true,true,0);
  }
- $('spaceName').textContent=target==='shared'?'共有':'自分';
+ $('spaceName').textContent=target==='shared'?'共有':'自分';updateNotificationBell();
 }
 function initSpaceGesture(){
  const overlay=$('spaceOverlay'),track=overlay.querySelector('.spaceTrack'),cards=[...overlay.querySelectorAll('.spacePreview')],dots=[...overlay.querySelectorAll('.spaceDots i')];
@@ -589,13 +610,21 @@ function initAppearance(){
  document.querySelectorAll('[data-style]').forEach(b=>b.addEventListener('click',()=>{appearance.style=b.dataset.style;saveAppearance();}));
 }
 
+function showReminderView(rid){
+ const x=reminders.find(r=>r.id===rid);if(!x)return;
+ document.getElementById('putatuReminderOverlay')?.remove();
+ document.body.insertAdjacentHTML('beforeend','<div class="putatuReminderOverlay" id="putatuReminderOverlay"><div class="putatuReminderSheet"><div class="putatuReminderSheetTop"><h2>'+esc(x.title)+'</h2><button type="button" data-reminder-close aria-label="閉じる">×</button></div><div class="reminderReadout"><span>次回の基準日</span><strong>'+esc(x.date)+'</strong><span>予定金額</span><strong>'+yen(x.amount)+'</strong><span>更新周期</span><strong>'+(x.repeat===24?'2年ごと':x.repeat===12?'毎年':x.repeat===1?'毎月':'単発')+'</strong></div><button type="button" class="reminderSettingsLink" data-reminder-settings>⚙ 通知設定を開く</button></div></div>');
+}
 function initReminderUI(){
  document.addEventListener('click',e=>{
-  const add=e.target.closest('[data-reminder-add]'),edit=e.target.closest('[data-reminder-edit]'),close=e.target.closest('[data-reminder-close]'),del=e.target.closest('[data-reminder-delete]');
+  const add=e.target.closest('[data-reminder-add]'),edit=e.target.closest('[data-reminder-edit]'),view=e.target.closest('[data-reminder-view]'),settings=e.target.closest('[data-reminder-settings]'),close=e.target.closest('[data-reminder-close]'),del=e.target.closest('[data-reminder-delete]');
+  if(e.target.closest('#notificationBell')){showNotificationPanel();return;}
+  if(settings){showNotificationPanel(true);return;}
+  if(view){showReminderView(view.dataset.reminderView);return;}
   if(add){showReminderEditor(null,add.dataset.reminderAdd);return;}
   if(edit){showReminderEditor(edit.dataset.reminderEdit,'personal');return;}
   if(close){document.getElementById('putatuReminderOverlay')?.remove();return;}
-  if(del){if(confirm('この予定を削除しますか？')){reminders=reminders.filter(x=>x.id!==del.dataset.reminderDelete);saveReminders();document.getElementById('putatuReminderOverlay')?.remove();render();}return;}
+  if(del){if(confirm('この予定を削除しますか？')){reminders=reminders.filter(x=>x.id!==del.dataset.reminderDelete);saveReminders();document.getElementById('putatuReminderOverlay')?.remove();render();updateNotificationBell();}return;}
   if(e.target.id==='putatuReminderOverlay')e.target.remove();
  });
  document.addEventListener('submit',e=>{
@@ -605,7 +634,7 @@ function initReminderUI(){
   if(!title||!/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(date)||amount===null)return;
   const item={id:rid||id(),title,date,amount,scope:d.get('scope')==='shared'?'shared':'personal',repeat,notify,demo:false};
   const i=reminders.findIndex(x=>x.id===item.id);if(i>=0)reminders[i]=item;else reminders.push(item);
-  saveReminders();document.getElementById('putatuReminderOverlay')?.remove();render();toast('予定を保存しました');
+  saveReminders();document.getElementById('putatuReminderOverlay')?.remove();render();updateNotificationBell();toast('予定を保存しました');
  },true);
 }
 function init(){seedReminderExamples();initReminderUI();initAppearance();initProject();document.addEventListener('click',click);document.addEventListener('submit',submit);document.addEventListener('change',change);document.addEventListener('input',e=>{if(e.target.dataset.plan)updatePlan(e.target);});initSpaceGesture();initBackSwipe();$('splitModal').addEventListener('click',e=>{if(e.target===$('splitModal'))closeSplit();});$('backHome').addEventListener('click',goBack);$('goHome').addEventListener('click',goHome);$('prevMonth').addEventListener('click',()=>moveMonth(-1));$('nextMonth').addEventListener('click',()=>moveMonth(1));document.querySelectorAll('.period').forEach(btn=>btn.addEventListener('click',()=>{period=Number(btn.dataset.period);document.querySelectorAll('.period').forEach(b=>{b.classList.toggle('active',b===btn);b.setAttribute('aria-pressed',b===btn);});drawBars($('myChart'),period,month().income);}));document.addEventListener('change',e=>{if(e.target.id==='income')incomeUpdate();if(e.target.name==='splitMode')updateSplitControls();});document.getElementById('splitPct').addEventListener('input',()=>{if(!splitEditing)return;const {total,id}=splitEditing;$('splitMine').value=id==='default'?0:Math.round(total*Number($('splitPct').value)/100);updateSplitControls();});document.getElementById('splitMine').addEventListener('input',()=>{if(!splitEditing)return;const v=Number($('splitMine').value)||0;$('splitPct').value=splitEditing.total?Math.round(v/splitEditing.total*100):0;updateSplitControls();});document.addEventListener('input',e=>{if(e.target.dataset.ratio!==undefined)adjustRatio(Number(e.target.dataset.ratio),Number(e.target.value));if(e.target.dataset.ratioNumber!==undefined)adjustRatio(Number(e.target.dataset.ratioNumber),Number(e.target.value));});$('exportData').addEventListener('click',()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='putatu-backup-'+monthKey(new Date())+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);toast('バックアップを書き出しました');});month();syncIncomeFields();showPage('me',false,true);save();}
